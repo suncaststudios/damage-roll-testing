@@ -1,6 +1,6 @@
     // ─── CONFIG — swap these two values ───────────────────────────────────────
-    const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-    const SUPABASE_KEY = 'YOUR_ANON_KEY';
+    const SUPABASE_URL = 'https://hbwnciwogcnbjwjzrvat.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhid25jaXdvZ2NuYmp3anpydmF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NzE3NzgsImV4cCI6MjA5NjI0Nzc3OH0.2bzjfDTeFC5DHjZWrt26p4MiXM2y0UzxCFbrfIGFCzw';
     // ──────────────────────────────────────────────────────────────────────────
 
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');

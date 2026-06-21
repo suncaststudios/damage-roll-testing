@@ -1,0 +1,883 @@
+/* ═══════════════════════════════════════════════════════════════════
+   DAMAGE ROLL — THEME OVERRIDES
+   Themes: space · aero · cyberpunk · scourge · wiki
+   Each theme overrides: fonts, colors, backgrounds, borders,
+   button shapes, layout feel, animations, and UI chrome.
+═══════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@300;400;600;700&family=Comfortaa:wght@400;600;700&family=Quicksand:wght@400;500;600&family=Share+Tech+Mono&family=VT323&family=Bebas+Neue&family=Linux+Libertine:ital,wght@0,400;0,600;1,400&family=Georgia&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════════
+   ██████  SPACE THEME
+   Deep cosmos — star-field void, nebula purples, cold steel UI.
+   Font: Orbitron (headers) + Exo 2 (body)
+   Colors: deep navy/void black, electric blue, nebula violet, cold white
+═══════════════════════════════════════════════════════════════════ */
+
+body.theme-space {
+    background: radial-gradient(ellipse at 30% 20%, #060818 0%, #020410 40%, #000208 100%) !important;
+    font-family: 'Exo 2', sans-serif !important;
+}
+
+/* Starfield particle canvas tint */
+body.theme-space #embers { filter: hue-rotate(200deg) saturate(0.6) brightness(0.7); }
+
+body.theme-space #game-container {
+    border-color: #0a1440 !important;
+    box-shadow: 0 0 0 1px #1a2860, 0 0 80px rgba(0,0,0,.98), 0 0 200px rgba(40,60,200,.25), inset 0 0 200px rgba(0,0,0,.95) !important;
+}
+body.theme-space #game-container::before {
+    background: radial-gradient(ellipse at 50% 0%, #08102a 0%, #04081a 60%, #000208 100%) !important;
+}
+
+/* Menu background — space panorama */
+body.theme-space #menu-bg {
+    background:
+        radial-gradient(ellipse at 20% 30%, rgba(80,40,180,.18) 0%, transparent 45%),
+        radial-gradient(ellipse at 80% 70%, rgba(20,80,200,.15) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 10%, rgba(100,60,220,.12) 0%, transparent 55%),
+        linear-gradient(180deg, #050c22, #080e28 30%, #04091c 60%, #020510) !important;
+}
+
+body.theme-space .screen {
+    background: radial-gradient(ellipse at 50% 20%, rgba(20,30,80,.97), rgba(2,4,18,.99)) !important;
+}
+
+/* Left panel — mission control dark */
+body.theme-space #menu-left-panel {
+    background: linear-gradient(170deg, rgba(8,12,35,.98), rgba(3,5,18,.99)) !important;
+    border-right-color: rgba(40,70,200,.25) !important;
+}
+body.theme-space #menu-left-panel::after {
+    background: linear-gradient(180deg, transparent, rgba(40,80,255,.35), rgba(60,100,255,.55), rgba(40,80,255,.35), transparent) !important;
+}
+
+/* Title */
+body.theme-space #menu-main h1 {
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 900 !important;
+    letter-spacing: 6px !important;
+    font-size: clamp(28px, 4vw, 52px) !important;
+    background: linear-gradient(180deg, #ffffff, #a0c0ff 20%, #4060e0 50%, #1030a0 80%, #080830 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: title-breathe-space 4s ease-in-out infinite !important;
+}
+@keyframes title-breathe-space {
+    0%,100% { filter: drop-shadow(0 0 20px rgba(60,100,255,.6)) drop-shadow(0 4px 0 #000); }
+    50%      { filter: drop-shadow(0 0 60px rgba(80,140,255,1)) drop-shadow(0 0 20px rgba(140,180,255,.5)) drop-shadow(0 4px 0 #000); }
+}
+body.theme-space #menu-main .subtitle {
+    font-family: 'Exo 2', sans-serif !important;
+    color: rgba(100,140,255,.6) !important;
+    letter-spacing: 4px !important;
+}
+
+/* Nav buttons — angular, sleek */
+body.theme-space .menu-nav-btn {
+    background: linear-gradient(90deg, rgba(8,14,45,.9), rgba(4,8,28,.95)) !important;
+    border-color: rgba(40,70,200,.4) !important;
+    border-left-color: rgba(60,100,255,.5) !important;
+    border-radius: 2px !important;
+    color: #a0b8e0 !important;
+    font-family: 'Exo 2', sans-serif !important;
+    letter-spacing: 2px !important;
+}
+body.theme-space .menu-nav-btn:hover {
+    background: linear-gradient(90deg, rgba(20,35,90,.95), rgba(10,18,55,.98)) !important;
+    border-color: rgba(80,120,255,.75) !important;
+    border-left-color: rgba(100,150,255,.9) !important;
+    color: #d0e4ff !important;
+    box-shadow: 0 2px 20px rgba(40,80,255,.2) !important;
+}
+body.theme-space .menu-nav-btn.primary-nav {
+    border-left-color: rgba(80,180,255,.9) !important;
+    color: #80d0ff !important;
+    background: linear-gradient(90deg, rgba(10,20,60,.95), rgba(5,10,35,.98)) !important;
+}
+
+/* Runes → stars */
+body.theme-space .rune-cell {
+    color: rgba(100,140,255,.3) !important;
+    text-shadow: 0 0 8px rgba(80,120,255,.7), 0 0 20px rgba(60,100,220,.4) !important;
+}
+
+/* Deco rule */
+body.theme-space .deco-rule {
+    background: linear-gradient(90deg, transparent, rgba(40,80,200,.5), rgba(80,130,255,.8), rgba(40,80,200,.5), transparent) !important;
+}
+body.theme-space .menu-divider {
+    background: linear-gradient(90deg, rgba(60,100,255,.5), rgba(80,180,255,.35), transparent) !important;
+}
+
+/* Screen titles */
+body.theme-space .screen h2 {
+    font-family: 'Orbitron', sans-serif !important;
+    font-size: 14px !important;
+    letter-spacing: 5px !important;
+    background: linear-gradient(180deg, #ffffff, #a0c4ff, #4070e0) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Buttons */
+body.theme-space .btn {
+    background: linear-gradient(180deg, rgba(10,20,60,.94), rgba(4,10,30,.97)) !important;
+    border-color: rgba(40,80,200,.55) !important;
+    color: #a0c0e8 !important;
+    border-radius: 2px !important;
+    font-family: 'Exo 2', sans-serif !important;
+    letter-spacing: 1.5px !important;
+}
+body.theme-space .btn:hover {
+    border-color: rgba(80,130,255,.85) !important;
+    color: #c0d8ff !important;
+    box-shadow: 0 0 16px rgba(40,80,255,.25) !important;
+}
+body.theme-space .btn.primary {
+    background: linear-gradient(180deg, rgba(20,40,120,.96), rgba(8,18,60,.98)) !important;
+    border-color: rgba(80,130,255,.85) !important;
+    color: #c8e0ff !important;
+}
+
+/* HUD */
+body.theme-space .hud {
+    background: linear-gradient(160deg, rgba(6,10,30,.97), rgba(2,5,18,.99)) !important;
+    border-color: rgba(40,70,180,.35) !important;
+}
+body.theme-space .hud-name { font-family: 'Orbitron', sans-serif !important; font-size: 9px !important; letter-spacing: 3px !important; }
+body.theme-space #turn-indicator { font-family: 'Orbitron', sans-serif !important; letter-spacing: 4px !important; color: #80c0ff !important; }
+
+/* Cards */
+body.theme-space .card {
+    border-color: rgba(40,80,200,.35) !important;
+    background: linear-gradient(160deg, rgba(8,14,42,.95), rgba(3,6,22,.98)) !important;
+    border-radius: 3px !important;
+}
+body.theme-space .c-name { font-family: 'Orbitron', sans-serif !important; font-size: 7px !important; letter-spacing: 2px !important; }
+
+/* Settings */
+body.theme-space .settings-section-label { color: #6080c0 !important; font-family: 'Exo 2', sans-serif !important; letter-spacing: 3px !important; }
+body.theme-space .settings-opt-btn { background: rgba(6,12,40,.9) !important; border-color: rgba(40,70,180,.4) !important; color: #7090c0 !important; border-radius: 2px !important; }
+body.theme-space .settings-opt-btn.active { background: rgba(12,24,70,.97) !important; border-color: rgba(80,130,255,.85) !important; color: #c0d8ff !important; }
+body.theme-space .settings-slider { accent-color: #4080ff !important; }
+
+/* Intro vars */
+body.theme-space { --intro-bright:#c0d8ff; --intro-mid:#6090d0; --intro-dim:#2040a0; --intro-rule:rgba(40,80,200,.3); --intro-sep:#080e28; }
+body.theme-space .ui-text-dim, body.theme-space [style*="color:#7a5a30"] { color: #4060a0 !important; }
+
+/* Forfeit popup */
+body.theme-space #forfeit-btn { background: rgba(40,8,8,.85) !important; border-color: rgba(160,20,20,.5) !important; color: rgba(220,80,80,.8) !important; }
+body.theme-space #forfeit-popup-box { background: linear-gradient(160deg, rgba(4,8,30,.99), rgba(2,4,20,.99)) !important; border-color: rgba(40,80,200,.5) !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   ████  FRUTIGER AERO THEME
+   2006-2013 Microsoft/Apple era — glassy aqua, soft gradients,
+   nature + technology harmony. Lush greens, sky blues, lens flares.
+   Font: Nunito (round, friendly) + Comfortaa
+   Colors: sky blue, aqua, lime green, glass white, soft teal
+═══════════════════════════════════════════════════════════════════ */
+
+body.theme-aero {
+    background: linear-gradient(160deg, #a8d8ea 0%, #c5e8d4 40%, #b0dce8 70%, #8fcae0 100%) !important;
+    font-family: 'Nunito', sans-serif !important;
+}
+
+body.theme-aero #embers { display: none; }
+
+body.theme-aero #game-container {
+    border-color: rgba(100,180,240,.5) !important;
+    box-shadow: 0 0 0 1px rgba(160,220,255,.6), 0 8px 40px rgba(0,100,200,.2), 0 0 80px rgba(80,180,255,.1) !important;
+}
+body.theme-aero #game-container::before {
+    background: linear-gradient(160deg, #c8e8f8 0%, #b4ddf4 30%, #c0eadc 60%, #d0f0e8 100%) !important;
+}
+
+body.theme-aero #menu-bg {
+    background:
+        radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.7) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 80%, rgba(140,220,200,.4) 0%, transparent 45%),
+        linear-gradient(160deg, #c4e8f8, #b8eae0 40%, #c8f0e8 70%, #b0ddf8 100%) !important;
+}
+
+body.theme-aero .screen {
+    background: linear-gradient(160deg, rgba(200,235,255,.97), rgba(185,230,250,.99)) !important;
+}
+
+body.theme-aero #menu-left-panel {
+    background: linear-gradient(170deg, rgba(210,240,255,.97), rgba(190,230,248,.99)) !important;
+    border-right-color: rgba(100,180,240,.35) !important;
+    box-shadow: 2px 0 20px rgba(80,160,220,.12) !important;
+}
+body.theme-aero #menu-left-panel::after {
+    background: linear-gradient(180deg, transparent, rgba(80,180,220,.4), rgba(60,200,160,.5), rgba(80,180,220,.4), transparent) !important;
+}
+
+/* Title — glossy chrome aqua */
+body.theme-aero #menu-main h1 {
+    font-family: 'Comfortaa', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 4px !important;
+    background: linear-gradient(180deg, #ffffff 0%, #a0dcf0 25%, #2090d0 55%, #006aaa 80%, #004488 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: title-breathe-aero 4s ease-in-out infinite !important;
+    filter: drop-shadow(0 2px 4px rgba(0,100,200,.3)) !important;
+}
+@keyframes title-breathe-aero {
+    0%,100% { filter: drop-shadow(0 2px 8px rgba(0,140,220,.4)); }
+    50%      { filter: drop-shadow(0 2px 20px rgba(0,180,255,.7)) drop-shadow(0 0 40px rgba(80,220,200,.3)); }
+}
+body.theme-aero #menu-main .subtitle { color: rgba(0,80,160,.55) !important; font-family: 'Nunito', sans-serif !important; }
+
+/* Nav buttons — glassy pill */
+body.theme-aero .menu-nav-btn {
+    background: linear-gradient(180deg, rgba(255,255,255,.7) 0%, rgba(200,235,255,.65) 50%, rgba(180,225,252,.6) 100%) !important;
+    border-color: rgba(100,180,240,.5) !important;
+    border-left-color: rgba(60,160,220,.6) !important;
+    border-radius: 12px !important;
+    color: #005088 !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0,100,200,.1), inset 0 1px 0 rgba(255,255,255,.8) !important;
+    letter-spacing: 0.5px !important;
+}
+body.theme-aero .menu-nav-btn:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,.85) 0%, rgba(210,240,255,.8) 50%, rgba(190,230,255,.75) 100%) !important;
+    border-color: rgba(60,160,220,.8) !important;
+    color: #003870 !important;
+    box-shadow: 0 4px 16px rgba(0,120,220,.2), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+body.theme-aero .menu-nav-btn.primary-nav {
+    border-left-color: rgba(60,200,140,.8) !important;
+    color: #006640 !important;
+    background: linear-gradient(180deg, rgba(255,255,255,.75) 0%, rgba(200,245,225,.7) 50%, rgba(180,240,215,.65) 100%) !important;
+}
+
+/* Rune cells → leaf/nature shapes */
+body.theme-aero .rune-cell { color: rgba(0,140,180,.2) !important; }
+
+/* Deco rule → aqua shine */
+body.theme-aero .deco-rule {
+    background: linear-gradient(90deg, transparent, rgba(60,160,220,.5), rgba(100,200,240,.7), rgba(60,160,220,.5), transparent) !important;
+}
+body.theme-aero .menu-divider {
+    background: linear-gradient(90deg, rgba(60,180,140,.5), rgba(80,200,200,.35), transparent) !important;
+}
+
+/* Screen titles */
+body.theme-aero .screen h2 {
+    font-family: 'Comfortaa', sans-serif !important;
+    background: linear-gradient(180deg, #0090d0, #006aaa) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Buttons — glassy pill */
+body.theme-aero .btn {
+    background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(200,232,255,.7)) !important;
+    border-color: rgba(80,160,230,.55) !important;
+    border-radius: 20px !important;
+    color: #004880 !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0,100,200,.12), inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+body.theme-aero .btn:hover {
+    background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(215,240,255,.85)) !important;
+    border-color: rgba(60,140,220,.85) !important;
+    color: #003060 !important;
+}
+body.theme-aero .btn.primary {
+    background: linear-gradient(180deg, rgba(80,180,240,.85), rgba(40,140,220,.9)) !important;
+    border-color: rgba(40,130,210,.9) !important;
+    color: #fff !important;
+    box-shadow: 0 3px 14px rgba(0,120,220,.3), inset 0 1px 0 rgba(255,255,255,.4) !important;
+}
+
+/* HUD — frosted glass panel */
+body.theme-aero .hud {
+    background: linear-gradient(160deg, rgba(220,242,255,.92), rgba(200,235,255,.95)) !important;
+    border-color: rgba(100,180,230,.4) !important;
+    box-shadow: 0 4px 20px rgba(0,100,200,.1), inset 0 1px 0 rgba(255,255,255,.7) !important;
+}
+body.theme-aero .hud-name { font-family: 'Nunito', sans-serif !important; font-weight: 700 !important; color: #003870 !important; }
+body.theme-aero .hp-label { color: #005088 !important; }
+body.theme-aero .hp-bar { border-color: rgba(80,160,220,.4) !important; }
+body.theme-aero #turn-indicator { color: #006aaa !important; font-family: 'Comfortaa', sans-serif !important; }
+
+/* Cards */
+body.theme-aero .card {
+    border-color: rgba(80,160,220,.4) !important;
+    background: linear-gradient(160deg, rgba(235,248,255,.95), rgba(220,242,255,.98)) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 3px 12px rgba(0,100,200,.1), inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+body.theme-aero .c-name { color: #003870 !important; font-family: 'Nunito', sans-serif !important; font-weight: 700 !important; }
+body.theme-aero .c-desc { color: #004488 !important; }
+
+/* Settings */
+body.theme-aero .settings-section-label { color: #0068a8 !important; }
+body.theme-aero .settings-opt-btn { background: rgba(220,240,255,.8) !important; border-color: rgba(100,180,230,.4) !important; color: #004488 !important; border-radius: 8px !important; }
+body.theme-aero .settings-opt-btn.active { background: rgba(80,170,230,.85) !important; border-color: rgba(50,140,210,.9) !important; color: #fff !important; }
+body.theme-aero .settings-slider { accent-color: #0090d0 !important; }
+body.theme-aero .settings-label, body.theme-aero .settings-check { color: #004488 !important; }
+body.theme-aero .settings-hint { color: #5090b8 !important; }
+
+body.theme-aero { --intro-bright:#0090d0; --intro-mid:#60b8e0; --intro-dim:#c0e4f4; --intro-rule:rgba(0,140,200,.2); --intro-sep:#b0ddf8; }
+
+body.theme-aero #forfeit-btn { background: rgba(220,60,60,.85) !important; border-color: rgba(200,40,40,.6) !important; color: #fff !important; border-radius: 20px !important; }
+body.theme-aero #forfeit-popup-box { background: linear-gradient(160deg, rgba(230,244,255,.99), rgba(215,238,255,.99)) !important; border-color: rgba(80,160,220,.5) !important; border-radius: 16px !important; }
+body.theme-aero #forfeit-popup-title { color: #003870 !important; }
+body.theme-aero #forfeit-popup-body { color: #004488 !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   ████  CYBERPUNK THEME
+   Neon-soaked dystopia — pitch black city, hot pink/magenta neons,
+   electric cyan, glitchy scan-lines, sharp angular geometry.
+   Font: Bebas Neue (headers) + Share Tech Mono (body)
+   Colors: void black, neon magenta, electric cyan, acid yellow
+═══════════════════════════════════════════════════════════════════ */
+
+body.theme-cyberpunk {
+    background: radial-gradient(ellipse at 30% 20%, #0d0020 0%, #050010 40%, #000008 100%) !important;
+    font-family: 'Share Tech Mono', monospace !important;
+}
+
+body.theme-cyberpunk #embers { filter: hue-rotate(280deg) saturate(2) brightness(0.8); }
+
+body.theme-cyberpunk #game-container {
+    border-color: #2a0040 !important;
+    box-shadow: 0 0 0 1px #ff00aa, 0 0 80px rgba(0,0,0,.98), 0 0 60px rgba(255,0,180,.15), inset 0 0 200px rgba(0,0,0,.96) !important;
+}
+body.theme-cyberpunk #game-container::before {
+    background: radial-gradient(ellipse at 50% 0%, #100020 0%, #06000e 60%, #000008 100%) !important;
+}
+
+body.theme-cyberpunk #menu-bg {
+    background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,255,255,.015) 3px, rgba(0,255,255,.015) 4px),
+        radial-gradient(ellipse at 30% 60%, rgba(255,0,160,.1) 0%, transparent 40%),
+        radial-gradient(ellipse at 70% 20%, rgba(0,200,255,.08) 0%, transparent 40%),
+        linear-gradient(180deg, #08000e, #100018 30%, #060010 60%, #030008) !important;
+}
+
+body.theme-cyberpunk .screen {
+    background:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,255,255,.012) 3px, rgba(0,255,255,.012) 4px),
+        radial-gradient(ellipse at 50% 20%, rgba(30,0,60,.98), rgba(3,0,12,.99)) !important;
+}
+
+body.theme-cyberpunk #menu-left-panel {
+    background: linear-gradient(170deg, rgba(14,0,28,.98), rgba(6,0,14,.99)) !important;
+    border-right-color: rgba(255,0,160,.3) !important;
+}
+body.theme-cyberpunk #menu-left-panel::after {
+    background: linear-gradient(180deg, transparent, rgba(255,0,160,.4), rgba(0,220,255,.5), rgba(255,0,160,.4), transparent) !important;
+}
+
+/* Title — neon glitch */
+body.theme-cyberpunk #menu-main h1 {
+    font-family: 'Bebas Neue', sans-serif !important;
+    font-weight: 400 !important;
+    letter-spacing: 10px !important;
+    font-size: clamp(32px, 5vw, 60px) !important;
+    background: linear-gradient(180deg, #ffffff 0%, #ff80d0 20%, #ff00aa 50%, #cc0080 80%, #660040 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: title-breathe-cyber 2.5s ease-in-out infinite !important;
+}
+@keyframes title-breathe-cyber {
+    0%,100% { filter: drop-shadow(0 0 10px rgba(255,0,180,.7)) drop-shadow(0 0 30px rgba(255,0,180,.4)) drop-shadow(0 4px 0 #000); }
+    50%      { filter: drop-shadow(0 0 25px rgba(255,0,200,1)) drop-shadow(0 0 60px rgba(0,200,255,.4)) drop-shadow(0 4px 0 #000); }
+}
+body.theme-cyberpunk #menu-main .subtitle {
+    font-family: 'Share Tech Mono', monospace !important;
+    color: rgba(0,220,255,.55) !important;
+    letter-spacing: 5px !important;
+    font-size: 8px !important;
+}
+
+/* Nav buttons — angular neon-bordered */
+body.theme-cyberpunk .menu-nav-btn {
+    background: linear-gradient(90deg, rgba(18,0,35,.9), rgba(8,0,18,.95)) !important;
+    border-color: rgba(255,0,160,.3) !important;
+    border-left-color: rgba(255,0,180,.6) !important;
+    border-radius: 0 !important;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)) !important;
+    color: #cc80ff !important;
+    font-family: 'Share Tech Mono', monospace !important;
+    letter-spacing: 2px !important;
+    font-size: 10px !important;
+}
+body.theme-cyberpunk .menu-nav-btn:hover {
+    background: linear-gradient(90deg, rgba(35,0,65,.95), rgba(16,0,32,.98)) !important;
+    border-color: rgba(255,0,200,.75) !important;
+    border-left-color: rgba(255,0,220,.9) !important;
+    color: #ff80e0 !important;
+    box-shadow: 0 0 20px rgba(255,0,180,.2), inset 0 0 20px rgba(255,0,180,.05) !important;
+}
+body.theme-cyberpunk .menu-nav-btn.primary-nav {
+    border-left-color: rgba(0,220,255,.9) !important;
+    color: #00ddff !important;
+}
+
+/* Runes → circuit traces */
+body.theme-cyberpunk .rune-cell { color: rgba(255,0,160,.25) !important; text-shadow: 0 0 6px rgba(255,0,180,.6), 0 0 18px rgba(0,200,255,.3) !important; }
+
+/* Deco rules */
+body.theme-cyberpunk .deco-rule {
+    background: linear-gradient(90deg, transparent, rgba(255,0,160,.5), rgba(0,220,255,.7), rgba(255,0,160,.5), transparent) !important;
+}
+body.theme-cyberpunk .menu-divider {
+    background: linear-gradient(90deg, rgba(255,0,160,.5), rgba(0,220,255,.35), transparent) !important;
+}
+
+/* Screen titles */
+body.theme-cyberpunk .screen h2 {
+    font-family: 'Bebas Neue', sans-serif !important;
+    font-size: 18px !important;
+    letter-spacing: 6px !important;
+    background: linear-gradient(180deg, #fff, #ff80cc, #ff00aa) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+}
+
+/* Buttons */
+body.theme-cyberpunk .btn {
+    background: linear-gradient(180deg, rgba(20,0,40,.94), rgba(8,0,18,.97)) !important;
+    border-color: rgba(255,0,160,.5) !important;
+    color: #cc80ff !important;
+    border-radius: 0 !important;
+    font-family: 'Share Tech Mono', monospace !important;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px)) !important;
+}
+body.theme-cyberpunk .btn:hover {
+    border-color: rgba(255,0,200,.85) !important;
+    color: #ff80e0 !important;
+    box-shadow: 0 0 16px rgba(255,0,180,.25) !important;
+}
+body.theme-cyberpunk .btn.primary {
+    background: linear-gradient(180deg, rgba(40,0,80,.96), rgba(18,0,36,.98)) !important;
+    border-color: rgba(0,220,255,.8) !important;
+    color: #00ddff !important;
+    box-shadow: 0 0 16px rgba(0,200,255,.2) !important;
+}
+
+/* HUD */
+body.theme-cyberpunk .hud {
+    background: linear-gradient(160deg, rgba(12,0,25,.97), rgba(5,0,12,.99)) !important;
+    border-color: rgba(255,0,160,.25) !important;
+    box-shadow: 0 0 12px rgba(255,0,160,.1) !important;
+}
+body.theme-cyberpunk .hud-name { font-family: 'Bebas Neue', sans-serif !important; letter-spacing: 3px !important; color: #ff80cc !important; font-size: 11px !important; }
+body.theme-cyberpunk #turn-indicator { font-family: 'Bebas Neue', sans-serif !important; letter-spacing: 5px !important; color: #00ddff !important; font-size: 18px !important; }
+
+/* Cards */
+body.theme-cyberpunk .card {
+    border-color: rgba(255,0,160,.3) !important;
+    background: linear-gradient(160deg, rgba(16,0,32,.96), rgba(6,0,14,.98)) !important;
+    border-radius: 0 !important;
+}
+body.theme-cyberpunk .card:hover {
+    border-color: rgba(255,0,200,.7) !important;
+    box-shadow: 0 0 20px rgba(255,0,180,.2) !important;
+}
+body.theme-cyberpunk .c-name { font-family: 'Bebas Neue', sans-serif !important; letter-spacing: 2px !important; color: #ff80d0 !important; }
+
+/* Settings */
+body.theme-cyberpunk .settings-section-label { color: #ff40a0 !important; font-family: 'Share Tech Mono', monospace !important; letter-spacing: 3px !important; }
+body.theme-cyberpunk .settings-opt-btn { background: rgba(12,0,25,.9) !important; border-color: rgba(255,0,160,.3) !important; color: #aa60cc !important; border-radius: 0 !important; }
+body.theme-cyberpunk .settings-opt-btn.active { background: rgba(25,0,50,.97) !important; border-color: rgba(255,0,200,.85) !important; color: #ff80e0 !important; }
+body.theme-cyberpunk .settings-slider { accent-color: #ff00aa !important; }
+body.theme-cyberpunk .settings-label, body.theme-cyberpunk .settings-check { color: #cc80ff !important; }
+
+body.theme-cyberpunk { --intro-bright:#ff80cc; --intro-mid:#ff00aa; --intro-dim:#660040; --intro-rule:rgba(255,0,160,.25); --intro-sep:#100020; }
+
+body.theme-cyberpunk #forfeit-btn { background: rgba(255,0,160,.15) !important; border-color: rgba(255,0,180,.5) !important; color: #ff80cc !important; border-radius: 0 !important; }
+body.theme-cyberpunk #forfeit-popup-box { background: linear-gradient(160deg, rgba(16,0,32,.99), rgba(8,0,18,.99)) !important; border-color: rgba(255,0,160,.5) !important; border-radius: 0 !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   ████  SCOURGE THEME
+   Eye of the Scourge — dark electronic, crimson & violet, 
+   corrupted elegance. Based on their artwork: deep magentas,
+   dark purples, corrupted golds, fractal decay textures.
+   Font: VT323 (glitchy retro headers) + Rajdhani (body)
+   Colors: void black, crimson, corrupted violet, decayed gold
+═══════════════════════════════════════════════════════════════════ */
+
+body.theme-scourge {
+    background: radial-gradient(ellipse at 30% 20%, #1a0010 0%, #0d0008 40%, #040004 100%) !important;
+    font-family: 'Rajdhani', sans-serif !important;
+}
+
+body.theme-scourge #embers { filter: hue-rotate(290deg) saturate(1.5) brightness(0.6); }
+
+body.theme-scourge #game-container {
+    border-color: #2d0018 !important;
+    box-shadow: 0 0 0 1px #6a0030, 0 0 80px rgba(0,0,0,.98), 0 0 80px rgba(180,0,80,.12), inset 0 0 200px rgba(0,0,0,.95) !important;
+}
+body.theme-scourge #game-container::before {
+    background: radial-gradient(ellipse at 50% 0%, #180010 0%, #0a0008 60%, #030004 100%) !important;
+}
+
+body.theme-scourge #menu-bg {
+    background:
+        radial-gradient(ellipse at 25% 40%, rgba(200,0,80,.1) 0%, transparent 45%),
+        radial-gradient(ellipse at 75% 60%, rgba(120,0,160,.1) 0%, transparent 45%),
+        linear-gradient(180deg, #0e0008, #160010 30%, #0a0008 60%, #060004) !important;
+}
+
+body.theme-scourge .screen {
+    background: radial-gradient(ellipse at 50% 20%, rgba(30,0,20,.98), rgba(5,0,5,.995)) !important;
+}
+
+body.theme-scourge #menu-left-panel {
+    background: linear-gradient(170deg, rgba(22,0,14,.98), rgba(8,0,6,.99)) !important;
+    border-right-color: rgba(180,0,80,.2) !important;
+}
+body.theme-scourge #menu-left-panel::after {
+    background: linear-gradient(180deg, transparent, rgba(180,0,80,.35), rgba(120,0,160,.45), rgba(180,0,80,.35), transparent) !important;
+}
+
+/* Title */
+body.theme-scourge #menu-main h1 {
+    font-family: 'VT323', monospace !important;
+    font-weight: 400 !important;
+    letter-spacing: 8px !important;
+    font-size: clamp(36px, 5.5vw, 68px) !important;
+    background: linear-gradient(180deg, #fff0f8 0%, #ff80b0 15%, #cc1060 40%, #8b0040 65%, #3d0020 85%, #1a0010 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: title-breathe-scourge 3s ease-in-out infinite !important;
+}
+@keyframes title-breathe-scourge {
+    0%,100% { filter: drop-shadow(0 0 15px rgba(200,0,80,.6)) drop-shadow(0 4px 0 #000); }
+    50%      { filter: drop-shadow(0 0 40px rgba(220,0,100,.9)) drop-shadow(0 0 15px rgba(160,0,120,.4)) drop-shadow(0 4px 0 #000); }
+}
+body.theme-scourge #menu-main .subtitle {
+    font-family: 'Rajdhani', sans-serif !important;
+    color: rgba(180,100,160,.5) !important;
+    letter-spacing: 5px !important;
+    font-size: 9px !important;
+}
+
+/* Nav buttons */
+body.theme-scourge .menu-nav-btn {
+    background: linear-gradient(90deg, rgba(28,0,16,.9), rgba(12,0,8,.95)) !important;
+    border-color: rgba(160,0,70,.35) !important;
+    border-left-color: rgba(200,0,90,.5) !important;
+    border-radius: 1px !important;
+    color: #d080a0 !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: 2px !important;
+    font-size: 11px !important;
+}
+body.theme-scourge .menu-nav-btn:hover {
+    background: linear-gradient(90deg, rgba(45,0,25,.95), rgba(20,0,12,.98)) !important;
+    border-color: rgba(220,0,100,.7) !important;
+    border-left-color: rgba(240,0,120,.9) !important;
+    color: #f0a0c0 !important;
+    box-shadow: 0 2px 16px rgba(200,0,80,.15) !important;
+}
+body.theme-scourge .menu-nav-btn.primary-nav {
+    border-left-color: rgba(160,60,220,.8) !important;
+    color: #c080e0 !important;
+}
+
+/* Runes */
+body.theme-scourge .rune-cell { color: rgba(180,0,80,.3) !important; text-shadow: 0 0 8px rgba(200,0,90,.6), 0 0 20px rgba(140,0,120,.4) !important; }
+
+/* Deco */
+body.theme-scourge .deco-rule {
+    background: linear-gradient(90deg, transparent, rgba(160,0,70,.5), rgba(200,0,90,.75), rgba(160,0,70,.5), transparent) !important;
+}
+body.theme-scourge .menu-divider {
+    background: linear-gradient(90deg, rgba(180,0,80,.5), rgba(140,0,160,.35), transparent) !important;
+}
+
+/* Screen titles */
+body.theme-scourge .screen h2 {
+    font-family: 'VT323', monospace !important;
+    font-size: 22px !important;
+    letter-spacing: 4px !important;
+    background: linear-gradient(180deg, #fff0f8, #ff80b0, #cc0060) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Buttons */
+body.theme-scourge .btn {
+    background: linear-gradient(180deg, rgba(30,0,16,.94), rgba(12,0,8,.97)) !important;
+    border-color: rgba(160,0,70,.5) !important;
+    color: #cc8090 !important;
+    border-radius: 1px !important;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: 1px !important;
+}
+body.theme-scourge .btn:hover {
+    border-color: rgba(220,0,100,.8) !important;
+    color: #e8a0b8 !important;
+    box-shadow: 0 0 14px rgba(200,0,80,.18) !important;
+}
+body.theme-scourge .btn.primary {
+    background: linear-gradient(180deg, rgba(55,0,28,.96), rgba(22,0,12,.98)) !important;
+    border-color: rgba(200,0,90,.8) !important;
+    color: #f0a0c0 !important;
+}
+
+/* HUD */
+body.theme-scourge .hud {
+    background: linear-gradient(160deg, rgba(18,0,10,.97), rgba(6,0,5,.99)) !important;
+    border-color: rgba(160,0,70,.25) !important;
+}
+body.theme-scourge .hud-name { font-family: 'Rajdhani', sans-serif !important; font-weight: 600 !important; color: #d080a0 !important; letter-spacing: 2px !important; }
+body.theme-scourge #turn-indicator { font-family: 'VT323', monospace !important; letter-spacing: 4px !important; color: #e060a0 !important; font-size: 20px !important; }
+
+/* Cards */
+body.theme-scourge .card {
+    border-color: rgba(160,0,70,.3) !important;
+    background: linear-gradient(160deg, rgba(22,0,12,.96), rgba(8,0,5,.98)) !important;
+    border-radius: 2px !important;
+}
+body.theme-scourge .card:hover { border-color: rgba(220,0,100,.65) !important; box-shadow: 0 0 14px rgba(200,0,80,.15) !important; }
+body.theme-scourge .c-name { font-family: 'Rajdhani', sans-serif !important; font-weight: 600 !important; color: #d080a0 !important; letter-spacing: 1.5px !important; }
+
+/* Settings */
+body.theme-scourge .settings-section-label { color: #c04080 !important; font-family: 'Rajdhani', sans-serif !important; letter-spacing: 3px !important; }
+body.theme-scourge .settings-opt-btn { background: rgba(16,0,10,.9) !important; border-color: rgba(140,0,60,.35) !important; color: #a06080 !important; border-radius: 1px !important; }
+body.theme-scourge .settings-opt-btn.active { background: rgba(35,0,18,.97) !important; border-color: rgba(220,0,100,.8) !important; color: #f0a0c0 !important; }
+body.theme-scourge .settings-slider { accent-color: #cc0060 !important; }
+body.theme-scourge .settings-label, body.theme-scourge .settings-check { color: #cc8090 !important; }
+
+body.theme-scourge { --intro-bright:#f080b0; --intro-mid:#cc0060; --intro-dim:#6a0030; --intro-rule:rgba(180,0,70,.25); --intro-sep:#100008; }
+
+body.theme-scourge #forfeit-btn { background: rgba(160,0,60,.15) !important; border-color: rgba(180,0,80,.5) !important; color: #e080a0 !important; }
+body.theme-scourge #forfeit-popup-box { background: linear-gradient(160deg, rgba(22,0,12,.99), rgba(8,0,5,.99)) !important; border-color: rgba(160,0,70,.5) !important; }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   ████  WIKI THEME
+   Wikipedia light — clean editorial white, readable serif body,
+   neutral grays, sky blue links, encyclopedic structure.
+   Font: Linux Libertine (headers, body) + Georgia serif fallback
+   Colors: white, light gray, neutral border, sky blue, dark text
+═══════════════════════════════════════════════════════════════════ */
+
+body.theme-wiki {
+    background: #f8f9fa !important;
+    font-family: 'Linux Libertine', Georgia, 'Times New Roman', serif !important;
+    color: #202122 !important;
+}
+
+body.theme-wiki #embers { display: none !important; }
+
+body.theme-wiki #game-container {
+    border-color: #a2a9b1 !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,.12) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+}
+body.theme-wiki #game-container::before {
+    background: #f8f9fa !important;
+}
+body.theme-wiki #game-container::after { display: none !important; }
+
+body.theme-wiki #menu-bg {
+    background: #f8f9fa !important;
+}
+
+body.theme-wiki .screen {
+    background: #ffffff !important;
+    color: #202122 !important;
+}
+
+/* Left panel — Wikipedia sidebar */
+body.theme-wiki #menu-left-panel {
+    background: #f8f9fa !important;
+    border-right: 1px solid #a2a9b1 !important;
+    box-shadow: none !important;
+}
+body.theme-wiki #menu-left-panel::before { display: none !important; }
+body.theme-wiki #menu-left-panel::after { display: none !important; }
+
+/* Title — editorial serif */
+body.theme-wiki #menu-main h1 {
+    font-family: 'Linux Libertine', Georgia, serif !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    font-size: clamp(24px, 3.5vw, 44px) !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #202122 !important;
+    color: #202122 !important;
+    text-shadow: none !important;
+    animation: none !important;
+    border-bottom: 1px solid #a2a9b1;
+    padding-bottom: 8px;
+}
+body.theme-wiki #menu-main .subtitle {
+    font-family: Georgia, serif !important;
+    color: #54595d !important;
+    font-style: italic !important;
+    letter-spacing: 0 !important;
+    font-size: 13px !important;
+}
+
+/* Nav buttons — wiki sidebar links */
+body.theme-wiki .menu-nav-btn {
+    background: none !important;
+    border: none !important;
+    border-bottom: 1px solid #eaecf0 !important;
+    border-radius: 0 !important;
+    color: #3366cc !important;
+    font-family: Georgia, serif !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    padding: 8px 12px !important;
+    text-align: left !important;
+    box-shadow: none !important;
+}
+body.theme-wiki .menu-nav-btn:hover {
+    background: #eaf3fb !important;
+    color: #2455c3 !important;
+    text-decoration: underline !important;
+    border-color: #a2a9b1 !important;
+}
+body.theme-wiki .menu-nav-btn.primary-nav {
+    color: #006400 !important;
+    font-weight: 600 !important;
+}
+body.theme-wiki .mnb-icon { display: none !important; }
+body.theme-wiki .mnb-arrow { color: #a2a9b1 !important; }
+
+/* Rune cells → hide */
+body.theme-wiki .rune-cell { display: none !important; }
+body.theme-wiki #title-sigil { display: none !important; }
+
+/* Deco rules → wiki hr */
+body.theme-wiki .deco-rule,
+body.theme-wiki .menu-divider {
+    background: #a2a9b1 !important;
+    height: 1px !important;
+}
+body.theme-wiki .deco-rule::before { display: none !important; }
+
+/* Screen titles */
+body.theme-wiki .screen h2 {
+    font-family: 'Linux Libertine', Georgia, serif !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    letter-spacing: 0 !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #202122 !important;
+    color: #202122 !important;
+    text-shadow: none !important;
+    border-bottom: 1px solid #a2a9b1 !important;
+    padding-bottom: 6px !important;
+}
+body.theme-wiki .screen-subtitle {
+    color: #54595d !important;
+    font-style: italic !important;
+}
+
+/* Buttons — wiki action buttons */
+body.theme-wiki .btn {
+    background: #f8f9fa !important;
+    border: 1px solid #a2a9b1 !important;
+    border-radius: 2px !important;
+    color: #202122 !important;
+    font-family: Georgia, serif !important;
+    font-size: 12px !important;
+    letter-spacing: 0 !important;
+    font-weight: 400 !important;
+    box-shadow: 0 1px 0 rgba(0,0,0,.08) !important;
+    padding: 7px 16px !important;
+}
+body.theme-wiki .btn:hover {
+    background: #eaecf0 !important;
+    border-color: #72777d !important;
+    color: #202122 !important;
+}
+body.theme-wiki .btn.primary {
+    background: #3366cc !important;
+    border-color: #2a55c0 !important;
+    color: #fff !important;
+}
+body.theme-wiki .btn.primary:hover {
+    background: #2455c3 !important;
+}
+
+/* HUD */
+body.theme-wiki .hud {
+    background: #fff !important;
+    border: 1px solid #a2a9b1 !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,.1) !important;
+    color: #202122 !important;
+}
+body.theme-wiki .hud-name { font-family: 'Linux Libertine', Georgia, serif !important; color: #202122 !important; font-size: 13px !important; letter-spacing: 0 !important; }
+body.theme-wiki .hp-label { color: #54595d !important; font-family: Georgia, serif !important; }
+body.theme-wiki .hp-bar { border-color: #a2a9b1 !important; }
+body.theme-wiki .hp-fill { background: #3366cc !important; }
+body.theme-wiki #turn-indicator { font-family: 'Linux Libertine', Georgia, serif !important; color: #202122 !important; font-size: 13px !important; letter-spacing: 1px !important; }
+
+/* Cards — article box style */
+body.theme-wiki .card {
+    background: #ffffff !important;
+    border: 1px solid #a2a9b1 !important;
+    border-radius: 2px !important;
+    color: #202122 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08) !important;
+}
+body.theme-wiki .card:hover {
+    border-color: #72777d !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,.12) !important;
+}
+body.theme-wiki .c-name { color: #202122 !important; font-family: 'Linux Libertine', Georgia, serif !important; font-weight: 600 !important; font-size: 12px !important; }
+body.theme-wiki .c-desc { color: #54595d !important; font-family: Georgia, serif !important; font-style: italic !important; }
+body.theme-wiki .badge { background: #eaecf0 !important; border-color: #a2a9b1 !important; color: #54595d !important; }
+
+/* Settings */
+body.theme-wiki .settings-section-label { color: #54595d !important; font-family: Georgia, serif !important; letter-spacing: 0 !important; font-size: 11px !important; text-transform: uppercase !important; }
+body.theme-wiki .settings-opt-btn { background: #f8f9fa !important; border: 1px solid #a2a9b1 !important; color: #202122 !important; border-radius: 2px !important; font-family: Georgia, serif !important; }
+body.theme-wiki .settings-opt-btn:hover { background: #eaecf0 !important; }
+body.theme-wiki .settings-opt-btn.active { background: #3366cc !important; border-color: #2a55c0 !important; color: #fff !important; }
+body.theme-wiki .settings-slider { accent-color: #3366cc !important; }
+body.theme-wiki .settings-label, body.theme-wiki .settings-check { color: #202122 !important; font-family: Georgia, serif !important; }
+body.theme-wiki .settings-hint { color: #54595d !important; font-family: Georgia, serif !important; }
+body.theme-wiki .settings-select { background: #f8f9fa !important; border: 1px solid #a2a9b1 !important; color: #202122 !important; border-radius: 2px !important; }
+body.theme-wiki .settings-select option { background: #fff !important; color: #202122 !important; }
+
+/* Auth wall */
+body.theme-wiki .auth-card { background: #fff !important; border: 1px solid #a2a9b1 !important; border-radius: 2px !important; }
+body.theme-wiki .auth-btn { background: #3366cc !important; border-color: #2a55c0 !important; color: #fff !important; border-radius: 2px !important; font-family: Georgia, serif !important; }
+body.theme-wiki .auth-btn.secondary { background: #f8f9fa !important; border-color: #a2a9b1 !important; color: #202122 !important; }
+body.theme-wiki .auth-input { background: #fff !important; border: 1px solid #a2a9b1 !important; color: #202122 !important; border-radius: 2px !important; font-family: Georgia, serif !important; }
+body.theme-wiki .auth-label { color: #54595d !important; font-family: Georgia, serif !important; }
+body.theme-wiki .auth-logo { color: #202122 !important; font-family: 'Linux Libertine', Georgia, serif !important; -webkit-text-fill-color: #202122 !important; }
+body.theme-wiki .auth-subtitle { color: #54595d !important; }
+
+/* Leaderboard, clubs, shop text */
+body.theme-wiki .lb-tab, body.theme-wiki .clubs-tab, body.theme-wiki .shop-tab {
+    font-family: Georgia, serif !important;
+    color: #3366cc !important;
+}
+body.theme-wiki .lb-tab.active, body.theme-wiki .clubs-tab.active, body.theme-wiki .shop-tab.active {
+    color: #202122 !important;
+    border-bottom-color: #202122 !important;
+}
+
+body.theme-wiki { --intro-bright:#202122; --intro-mid:#54595d; --intro-dim:#a2a9b1; --intro-rule:rgba(162,169,177,.4); --intro-sep:#eaecf0; --ui-text-dim:#54595d; --ui-text-mid:#202122; --ui-text-bright:#000; --ui-label:#202122; }
+
+body.theme-wiki #forfeit-btn { background: #fee7e6 !important; border-color: #d33 !important; color: #cc0000 !important; border-radius: 2px !important; }
+body.theme-wiki #forfeit-popup-box { background: #fff !important; border: 1px solid #a2a9b1 !important; border-radius: 2px !important; box-shadow: 0 4px 20px rgba(0,0,0,.15) !important; }
+body.theme-wiki #forfeit-popup-title { color: #202122 !important; font-family: 'Linux Libertine', Georgia, serif !important; font-weight: 400 !important; }
+body.theme-wiki #forfeit-popup-body { color: #54595d !important; }

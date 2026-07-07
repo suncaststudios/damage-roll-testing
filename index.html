@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAMAGE ROLL - SunCast Studios</title>
+
+    <!-- ═══════════ SUPABASE ═══════════ -->
+    <script src="js/supabase.js" type="module"></script>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/graphics.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <style id="rarity-glow-style">
+        
+        .card[data-rarity="uncommon"]  { border-color: rgba(40,120,40,0.8);  box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 12px rgba(40,180,40,0.25) !important; }
+        .card[data-rarity="rare"]      { border-color: rgba(30,90,200,0.8);  box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 16px rgba(30,90,255,0.35) !important; }
+        .card[data-rarity="epic"]      { border-color: rgba(120,30,180,0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 20px rgba(140,0,220,0.4) !important; }
+        .card[data-rarity="legendary"] { border-color: rgba(200,160,0,0.9);  box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 24px rgba(255,180,0,0.5) !important; animation: leg-shimmer 2s ease-in-out infinite !important; }
+    </style>
+    <!-- Graphics quality CSS moved to css/graphics.css -->
+</head>
+<body class="gfx-mid">
+
+<div id="changelog-panel">
+    <div class="cl-titlebar">
+        <span class="cl-titlebar-text">✦ Update Log</span>
+        <div class="cl-titlebar-dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+    <div id="changelog-body">
+        <div id="cl-entries"></div>
+    </div>
+</div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         AUTH WALL — shown on load if not logged in
+    ═══════════════════════════════════════════════════════════════════ -->
+    <input type="file" id="auth-avatar-file"  accept="image/*" style="display:none;" onchange="_authAvatarUpload(event)">
+    <input type="file" id="auth-banner-file"  accept="image/*" style="display:none;" onchange="_authBannerUpload(event)">
+
+    <div id="auth-wall" style="display:none;">
+    <div class="auth-card" id="auth-card">
+
+        <!-- ── SCREEN 0: Login ── -->
+        <div id="auth-s0">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <div class="auth-logo" style="font-size:15px;letter-spacing:4px;">Profile</div>
+                <button id="auth-wall-close" onclick="_hideAuthWall()" title="Close"
+                    style="display:none;background:none;border:none;cursor:pointer;font-size:18px;color:#6b4f2a;padding:4px 8px;transition:color 0.2s;line-height:1;"
+                    onmouseover="this.style.color='#e8c870'" onmouseout="this.style.color='#6b4f2a'">✕</button>
+            </div>
+            <div class="auth-subtitle" style="margin-top:-2px;margin-bottom:10px;">Sign in to your account</div>
+            <hr class="auth-divider">
+
+            <div class="auth-field">
+                <label class="auth-label">Email</label>
+                <input class="auth-input" id="auth-login-email" type="email" placeholder="your@email.com" autocomplete="email">
+            </div>
+            <div class="auth-field">
+                <label class="auth-label">Password</label>
+                <input class="auth-input" id="auth-login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <div class="auth-err" id="auth-login-err"></div>
+            <button class="auth-btn" id="auth-login-btn" onclick="_authLogin()">⚔ Login</button>
+            <div style="display:flex;align-items:center;gap:8px;margin:10px 0 4px;">
+                <div style="flex:1;height:1px;background:rgba(100,65,20,0.25);"></div>
+                <span style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:2px;color:#4a3010;text-transform:uppercase;">or</span>
+                <div style="flex:1;height:1px;background:rgba(100,65,20,0.25);"></div>
+            </div>
+            <button class="auth-btn auth-btn-discord" id="auth-discord-btn" onclick="_authDiscord()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="flex-shrink:0;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                Continue with Discord
+            </button>
+            <hr class="auth-divider">
+            <button class="auth-btn secondary" onclick="_authGoto(1)">Create Account</button>
+        </div>
+
+        <!-- ── SCREEN 1: Email + Password ── -->
+        <div id="auth-s1" style="display:none;">
+            <div class="auth-logo">Create Account</div>
+            <div class="auth-steps">
+                <div class="auth-step-dot active" id="dot-0"></div>
+                <div class="auth-step-dot" id="dot-1"></div>
+                <div class="auth-step-dot" id="dot-2"></div>
+            </div>
+            <div class="auth-step-label">Step 1 of 3 — Credentials</div>
+
+            <div class="auth-field">
+                <label class="auth-label">Email</label>
+                <input class="auth-input" id="auth-reg-email" type="email" placeholder="your@email.com">
+            </div>
+            <div class="auth-field">
+                <label class="auth-label">Confirm Email</label>
+                <input class="auth-input" id="auth-reg-email2" type="email" placeholder="confirm email">
+            </div>
+            <div class="auth-field">
+                <label class="auth-label">Password</label>
+                <input class="auth-input" id="auth-reg-pass" type="password" placeholder="min 8 characters">
+            </div>
+            <div class="auth-field">
+                <label class="auth-label">Confirm Password</label>
+                <input class="auth-input" id="auth-reg-pass2" type="password" placeholder="confirm password">
+            </div>
+            <div class="auth-err" id="auth-s1-err"></div>
+            <button class="auth-btn" onclick="_authS1Next()">Next →</button>
+            <button class="auth-btn secondary" onclick="_authGoto(0)">‹ Back to Login</button>
+        </div>
+
+        <!-- ── SCREEN 2: Display Info ── -->
+        <div id="auth-s2" style="display:none;">
+            <div class="auth-logo">Your Identity</div>
+            <div class="auth-steps">
+                <div class="auth-step-dot done" id="dot2-0"></div>
+                <div class="auth-step-dot active" id="dot2-1"></div>
+                <div class="auth-step-dot" id="dot2-2"></div>
+            </div>
+            <div class="auth-step-label">Step 2 of 3 — About You</div>
+
+            <div class="auth-field">
+                <label class="auth-label">Display Name</label>
+                <input class="auth-input" id="auth-display-name" type="text" maxlength="32" placeholder="e.g. Iron Serpent">
+            </div>
+            <div class="auth-field">
+                <label class="auth-label">Username</label>
+                <input class="auth-input" id="auth-username" type="text" maxlength="24" placeholder="auto-generated if left blank">
+            </div>
+            <div class="auth-field">
+                <label class="auth-label">Date of Birth</label>
+                <input class="auth-input" id="auth-dob" type="date">
+            </div>
+            <div class="auth-field">
+                <label class="auth-label">Gender</label>
+                <select class="auth-select" id="auth-gender">
+                    <option value="">Prefer not to say</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="b2">B2 Stealth Bomber</option>
+                    <option value="nts">Prefer not to say</option>
+                </select>
+            </div>
+            <div class="auth-err" id="auth-s2-err"></div>
+            <button class="auth-btn" onclick="_authS2Next()">Next →</button>
+            <button class="auth-btn secondary" onclick="_authGoto(1)">‹ Back</button>
+        </div>
+
+        <!-- ── SCREEN 3: Profile Customisation ── -->
+        <div id="auth-s3" style="display:none;">
+            <div class="auth-logo">Your Profile</div>
+            <div class="auth-steps">
+                <div class="auth-step-dot done" id="dot3-0"></div>
+                <div class="auth-step-dot done" id="dot3-1"></div>
+                <div class="auth-step-dot active" id="dot3-2"></div>
+            </div>
+            <div class="auth-step-label">Step 3 of 3 — Customise</div>
+
+            <!-- Banner -->
+            <div class="auth-field">
+                <label class="auth-label">Banner</label>
+                <div class="auth-banner-preview" id="auth-banner-preview"></div>
+                <div class="auth-banner-grid" id="auth-banner-grid" style="margin-top:6px;"></div>
+                <button class="auth-upload-btn" style="margin-top:5px;" onclick="document.getElementById('auth-banner-file').click()">📁 Upload Custom Banner</button>
+            </div>
+
+            <!-- Avatar -->
+            <div class="auth-field">
+                <label class="auth-label">Profile Picture</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <div id="auth-avatar-preview" style="width:56px;height:56px;border-radius:50%;background:rgba(30,15,2,0.8);border:2px solid rgba(140,95,25,0.5);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;flex-shrink:0;">⚔️</div>
+                    <div style="flex:1;">
+                        <div class="auth-avatar-grid" id="auth-avatar-grid"></div>
+                        <button class="auth-upload-btn" style="margin-top:5px;" onclick="document.getElementById('auth-avatar-file').click()">📁 Upload Custom Image</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bio -->
+            <div class="auth-field">
+                <label class="auth-label">Bio</label>
+                <textarea class="auth-input" id="auth-bio" maxlength="200" rows="3" placeholder="Tell adventurers about yourself…" style="resize:vertical;"></textarea>
+            </div>
+
+            <!-- Quote -->
+            <div class="auth-field">
+                <label class="auth-label">Quote <span style="color:#4a3010;font-size:8px;">(shown on hover)</span></label>
+                <input class="auth-input" id="auth-quote" type="text" maxlength="120" placeholder="A line that defines you…">
+                <div class="auth-quote-preview" id="auth-quote-preview" style="display:none;"></div>
+            </div>
+
+            <div class="auth-err" id="auth-s3-err"></div>
+            <button class="auth-btn" id="auth-create-btn" onclick="_authCreateProfile()">✦ Create Account</button>
+            <button class="auth-btn secondary" onclick="_authGoto(2)">‹ Back</button>
+        </div>
+
+    </div><!-- end auth-card -->
+    </div><!-- end auth-wall -->
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         PREFERENCES SIDEBAR (inside menu-profile)
+    ═══════════════════════════════════════════════════════════════════ -->
+    <div id="pref-sidebar">
+        <div class="pref-header">
+            <span class="pref-title">⚙ Preferences</span>
+            <button class="pref-close" onclick="closePrefSidebar()">✕</button>
+        </div>
+
+        <!-- Online Status -->
+        <div class="pref-section-label">Online Status</div>
+        <div class="pref-status-btns">
+            <button class="pref-status-btn" id="pref-st-online"  onclick="_setPrefStatus('online')">🟢 Online</button>
+            <button class="pref-status-btn" id="pref-st-offline" onclick="_setPrefStatus('offline')">⚫ Offline</button>
+            <button class="pref-status-btn" id="pref-st-dnd"     onclick="_setPrefStatus('dnd')">🔴 Do Not Disturb</button>
+        </div>
+
+        <!-- Save Login -->
+        <div class="pref-section-label">Session</div>
+        <div class="pref-row">
+            <div>
+                <div class="pref-row-label">Save Login</div>
+                <div class="pref-row-sub">Stay logged in between sessions</div>
+            </div>
+            <label class="pref-toggle">
+                <input type="checkbox" id="pref-save-login" onchange="_toggleSaveLogin(this.checked)">
+                <span class="pref-toggle-slider"></span>
+            </label>
+        </div>
+
+        <!-- MFA -->
+        <div class="pref-section-label">Security</div>
+        <div class="pref-row">
+            <div>
+                <div class="pref-row-label">Two-Factor Auth</div>
+                <div class="pref-row-sub">Authenticator app (TOTP)</div>
+            </div>
+            <label class="pref-toggle">
+                <input type="checkbox" id="pref-mfa-toggle" onchange="_toggleMFA(this.checked)">
+                <span class="pref-toggle-slider"></span>
+            </label>
+        </div>
+        <div id="pref-mfa-qr" style="display:none; flex-direction:column; gap:6px; padding:8px 0;">
+            <div style="font-family:'Cinzel',serif;font-size:9px;color:#8a6535;text-align:center;">Scan with your authenticator app</div>
+            <div id="pref-mfa-qr-img" style="display:flex;justify-content:center;"></div>
+            <div style="font-family:'Cinzel',serif;font-size:8px;color:#6b4f2a;text-align:center;word-break:break-all;" id="pref-mfa-secret"></div>
+            <input class="auth-input" id="pref-mfa-code" type="text" maxlength="6" placeholder="Enter 6-digit code to confirm" style="text-align:center;letter-spacing:4px;">
+            <button class="auth-btn" style="font-size:9px;padding:8px;" onclick="_confirmMFA()">Verify & Enable</button>
+            <div class="auth-err" id="pref-mfa-err"></div>
+        </div>
+
+        <!-- Gender change -->
+        <div class="pref-section-label">Profile</div>
+        <div class="pref-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
+            <div class="pref-row-label">Change Gender</div>
+            <div class="pref-row-sub" id="pref-gender-cooldown-msg"></div>
+            <button class="auth-btn secondary" id="pref-gender-btn" onclick="_prefChangeGender()" style="width:100%;margin-top:2px;">Change Gender</button>
+        </div>
+        <div class="pref-confirm-box" id="pref-gender-confirm">
+            <div class="pref-confirm-msg">Are you sure you want to change your gender? You can only do this once per week.</div>
+            <div class="pref-confirm-btns">
+                <button class="auth-btn secondary" onclick="document.getElementById('pref-gender-confirm').classList.remove('show')">Cancel</button>
+                <button class="auth-btn" onclick="_prefDoGenderChange()">Yes, Change</button>
+            </div>
+            <select class="auth-select" id="pref-gender-new" style="margin-top:4px;">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="b2">B2 Stealth Bomber</option>
+                <option value="nts">Prefer not to say</option>
+            </select>
+        </div>
+
+        <!-- Logout -->
+        <div class="pref-section-label">Account</div>
+        <button class="auth-btn secondary" onclick="_prefLogout()" style="width:100%;margin-top:4px;">Sign Out</button>
+
+        <!-- Delete Account -->
+        <button class="auth-btn danger" onclick="_prefDeleteAccountPrompt()" style="width:100%;margin-top:6px;">Delete Account</button>
+        <div class="pref-confirm-box" id="pref-delete-confirm">
+            <div class="pref-confirm-msg">⚠ This permanently deletes your account and all data. This cannot be undone.</div>
+            <div class="pref-confirm-btns">
+                <button class="auth-btn secondary" onclick="document.getElementById('pref-delete-confirm').classList.remove('show')">Cancel</button>
+                <button class="auth-btn danger" onclick="_prefDeleteAccountFinal()">Delete Account</button>
+            </div>
+            <input class="auth-input" id="pref-delete-password" type="password" placeholder="Enter password to confirm" style="margin-top:6px;display:none;">
+            <button class="auth-btn danger" id="pref-delete-final-btn" style="display:none;" onclick="_prefDeleteFinal()">Confirm Delete</button>
+            <div class="auth-err" id="pref-delete-err"></div>
+        </div>
+
+        <div style="height:20px;"></div>
+    </div><!-- end pref-sidebar -->
+
+    <div id="game-container">
+    <canvas id="embers"></canvas>
+    <div id="flash-overlay"></div>
+    <canvas id="trail-canvas" width="980" height="670"></canvas>
+    <div id="field-line"></div>
+
+    <div class="corner-rune cr-tl">✦</div>
+    <div class="corner-rune cr-tr">✦</div>
+    <div class="corner-rune cr-bl">✦</div>
+    <div class="corner-rune cr-br">✦</div>
+
+    <div class="zone" id="zone-enemy"><div class="zone-art">💀</div></div>
+    <div class="zone" id="zone-player"><div class="zone-art">🛡️</div></div>
+
+    <button id="mute-btn" title="Toggle Sound">🔊</button>
+    <button id="forfeit-btn" title="Forfeit match" onclick="forfeit()">🏳</button>
+
+    
+    <div id="menu-main" class="screen">
+
+        <!-- ░░ LEFT PANEL ░░ -->
+        <div id="menu-left-panel">
+
+            <!-- Title block -->
+            <div id="menu-title-area">
+                <h1>Damage Roll</h1>
+                <div class="subtitle">Grand Reopening Update</div>
+                <div class="menu-divider"></div>
+            </div>
+
+            <!-- PRIMARY actions — big, always visible -->
+            <div id="menu-btn-primary">
+                <button class="menu-nav-btn primary-nav" onclick="playSfx('menuClick'); toggle('menu-start', true)">
+                    <span class="mnb-icon">⚡</span>
+                    <span class="mnb-label">Start Battle</span>
+                    <span class="mnb-arrow">›</span>
+                </button>
+                <button class="menu-nav-btn" onclick="playSfx('menuClick'); toggle('menu-decks', true)">
+                    <span class="mnb-icon">🃏</span>
+                    <span class="mnb-label">Decks</span>
+                    <span class="mnb-arrow">›</span>
+                </button>
+                <button class="menu-nav-btn" onclick="playSfx('menuClick'); openShop()">
+                    <span class="mnb-icon">🛒</span>
+                    <span class="mnb-label">Shop</span>
+                    <span class="mnb-arrow">›</span>
+                </button>
+                <button class="menu-nav-btn" onclick="playSfx('menuClick'); openAchievements()">
+                    <span class="mnb-icon">🏆</span>
+                    <span class="mnb-label">Achievements</span>
+                    <span class="mnb-arrow">›</span>
+                </button>
+            </div>
+
+            <!-- Thin divider between primary and secondary -->
+            <div class="menu-section-gap"></div>
+
+            <!-- SECONDARY actions — smaller, grouped -->
+            <div id="menu-btn-secondary">
+                <button class="menu-nav-btn menu-nav-sm" onclick="playSfx('menuClick'); toggle('menu-settings', true)">
+                    <span class="mnb-icon">⚙</span>
+                    <span class="mnb-label">Settings</span>
+                </button>
+                <button class="menu-nav-btn menu-nav-sm" onclick="playSfx('menuClick'); toggle('menu-mods', true)">
+                    <span class="mnb-icon">🔧</span>
+                    <span class="mnb-label">Mods</span>
+                </button>
+                <button class="menu-nav-btn menu-nav-sm" onclick="playSfx('menuClick'); toggle('menu-credits', true)">
+                    <span class="mnb-icon">✦</span>
+                    <span class="mnb-label">Credits</span>
+                </button>
+                <button class="menu-nav-btn menu-nav-sm quit-nav" onclick="playSfx('menuClick'); quitGame()">
+                    <span class="mnb-icon">✕</span>
+                    <span class="mnb-label">Quit</span>
+                </button>
+            </div>
+
+            <!-- Bottom strip: socials + version -->
+            <div id="menu-bottom-strip">
+                <div id="social-bar">
+                    <a class="social-btn" href="https://www.youtube.com/@SunCastStudiosYT" target="_blank" title="YouTube">
+                        <svg viewBox="0 0 24 24"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.8 2 12 2 12 2s-4.8 0-7.3.2c-.6 0-1.9.1-3 1.3C.8 4.3.5 6.2.5 6.2S.2 8.4.2 10.6v2.1c0 2.2.3 4.4.3 4.4s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7 21.2 12 21.2 12 21.2s4.8 0 7.3-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.2.3-4.4v-2c0-2.2-.3-4.3-.3-4.3zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
+                    </a>
+                    <a class="social-btn" href="https://x.com/r3ctrr313" target="_blank" title="X">
+                        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a class="social-btn" href="https://discord.gg/e2USWdSDKs" target="_blank" title="Discord">
+                        <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                    </a>
+                    <a class="social-btn" href="https://suncast-studios.itch.io" target="_blank" title="itch.io">
+                        <svg viewBox="0 0 24 24"><path d="M3.13 1.338C2.08 1.96.02 4.328 0 4.95v1.03c0 1.303 1.22 2.45 2.325 2.45 1.33 0 2.436-1.102 2.436-2.41 0 1.308 1.07 2.41 2.4 2.41 1.33 0 2.363-1.102 2.363-2.41 0 1.308 1.107 2.41 2.438 2.41h.024c1.33 0 2.438-1.102 2.438-2.41 0 1.308 1.032 2.41 2.362 2.41 1.33 0 2.4-1.102 2.4-2.41 0 1.308 1.106 2.41 2.436 2.41C22.78 8.43 24 7.282 24 5.98V4.95c-.02-.62-2.08-2.99-3.13-3.612C19.948 1.339 3.952 1.339 3.13 1.338zM7 9.773c-.27 0-.54.026-.8.077C6.03 9.91 5.878 9.99 5.72 10.078c0 0-1.45 7.44-1.72 9.544C5.568 21.174 8.51 22.59 12 22.59s6.432-1.416 8-2.968c-.27-2.105-1.72-9.544-1.72-9.544a3.936 3.936 0 0 0-.36-.175A3.89 3.89 0 0 0 17.015 9.773c-.96 0-1.733.41-2.274 1.016-.402-.61-1.057-1.016-1.84-1.016-.784 0-1.44.406-1.84 1.016-.54-.606-1.314-1.016-2.274-1.016H7zm-.395 3.38h.014c.48 0 .87.39.87.87v1.74h1.74c.48 0 .87.39.87.87s-.39.87-.87.87H7.49v1.74c0 .48-.39.87-.87.87a.872.872 0 0 1-.872-.87v-1.74H4.01a.872.872 0 0 1-.872-.87c0-.48.39-.87.87-.87h1.742v-1.74c0-.48.39-.87.87-.87zm9.77.508c.6 0 1.087.487 1.087 1.087s-.487 1.087-1.087 1.087-1.087-.487-1.087-1.087.487-1.087 1.087-1.087zm-2.61 2.174c.6 0 1.087.487 1.087 1.087s-.487 1.087-1.087 1.087-1.087-.487-1.087-1.087.487-1.087 1.087-1.087z"/></svg>
+                    </a>
+                </div>
+                <div id="studio-credit">SunCast Studios · v0.5.6</div>
+            </div>
+
+        </div><!-- end menu-left-panel -->
+
+        <!-- ░░ RIGHT PANEL ░░ -->
+        <div id="menu-right-panel">
+            <div id="menu-bg"></div>
+            <div id="rune-grid"></div>
+
+            <!-- orbiting sigils centered on card -->
+            <svg id="title-sigil" viewBox="0 0 320 320" fill="none">
+                <circle cx="160" cy="160" r="150" stroke="rgba(255,170,30,0.3)" stroke-width="1"/>
+                <circle cx="160" cy="160" r="130" stroke="rgba(255,140,20,0.2)" stroke-width="1" stroke-dasharray="3 7"/>
+                <polygon points="160,20 291,95 291,245 160,320 29,245 29,95" fill="none" stroke="rgba(255,160,30,0.25)" stroke-width="1"/>
+                <path d="M160 30 L170 140 L280 160 L170 180 L160 290 L150 180 L40 160 L150 140 Z" fill="none" stroke="rgba(255,160,40,0.2)" stroke-width="1"/>
+                <line x1="160" y1="10" x2="160" y2="22" stroke="rgba(255,200,80,0.6)" stroke-width="1.5"/>
+                <line x1="160" y1="298" x2="160" y2="310" stroke="rgba(255,200,80,0.6)" stroke-width="1.5"/>
+                <line x1="10" y1="160" x2="22" y2="160" stroke="rgba(255,200,80,0.6)" stroke-width="1.5"/>
+                <line x1="298" y1="160" x2="310" y2="160" stroke="rgba(255,200,80,0.6)" stroke-width="1.5"/>
+            </svg>
+            <svg id="title-sigil-inner" viewBox="0 0 240 240" fill="none">
+                <circle cx="120" cy="120" r="100" stroke="rgba(255,160,30,0.3)" stroke-width="1" stroke-dasharray="2 5"/>
+                <circle cx="120" cy="120" r="80" stroke="rgba(255,140,20,0.2)" stroke-width="1"/>
+                <polygon points="120,25 205,175 35,175" fill="none" stroke="rgba(255,170,40,0.3)" stroke-width="1"/>
+                <polygon points="120,215 35,65 205,65" fill="none" stroke="rgba(255,150,30,0.25)" stroke-width="1"/>
+                <circle cx="120" cy="120" r="18" stroke="rgba(255,200,60,0.5)" stroke-width="1.5"/>
+            </svg>
+
+            <!-- The hero card — tilt follows mouse -->
+            <div id="menu-float-card">
+                <div class="card" data-rarity="legendary" style="pointer-events:none; width:170px; height:252px; padding:14px 12px 12px; cursor:default;">
+                    <div class="c-name">⚔ Attack</div>
+                    <div class="c-icon" style="font-size:54px;">⚔️</div>
+                    <div class="c-desc">Deal <strong style="font-style:normal;color:#3a1a00;">6</strong> damage to the enemy.</div>
+                </div>
+            </div>
+
+            <div id="menu-frame">
+                <div class="menu-corner tl"></div>
+                <div class="menu-corner tr"></div>
+                <div class="menu-corner bl"></div>
+                <div class="menu-corner br"></div>
+            </div>
+        </div><!-- end menu-right-panel -->
+
+        <!-- Corner pill: Profile · Leaderboard · Clubs -->
+        <div id="corner-pill">
+            <span id="corner-level-badge">Lv.1</span>
+            <button id="profile-corner-btn" onclick="openProfile()"     title="Profile">👤 Profile</button>
+            <div class="corner-pill-divider"></div>
+            <button id="lb-corner-btn"       onclick="openLeaderboard()" title="Leaderboard">🏆 Levels</button>
+            <div class="corner-pill-divider"></div>
+            <button id="clubs-corner-btn"    onclick="openClubs()"       title="Clubs">🛡 Clubs</button>
+        </div>
+
+    </div>
+
+    
+
+
+    <!-- ═══════════════════════════════════════ LEADERBOARD SCREEN ══════════════════════════════════════ -->
+    <div id="menu-leaderboard" class="screen" style="display:none;">
+    <div class="lb-wrap">
+
+        <div class="lb-header">
+            <span class="lb-title">🏆 Leaderboard</span>
+            <button class="lb-close-x" onclick="playSfx('menuClick'); toggle('menu-leaderboard', false)">‹ Back</button>
+        </div>
+
+        <!-- Category tabs -->
+        <div class="lb-tabs">
+            <button class="lb-tab active"  onclick="switchLbTab('top-rank')">Top Level</button>
+            <button class="lb-tab"         onclick="switchLbTab('most-wins')">Highest Wins</button>
+            <button class="lb-tab"         onclick="switchLbTab('most-losses')">Highest Losses</button>
+            <button class="lb-tab"         onclick="switchLbTab('club-rank')">Top Club Rank</button>
+            <button class="lb-tab"         onclick="switchLbTab('tournaments')">Most Tournaments Won</button>
+        </div>
+
+        <!-- Top Rank -->
+        <div class="lb-panel active" id="lb-panel-top-rank">
+            <div class="lb-loading" id="lb-loading-top-rank">Loading…</div>
+        </div>
+
+        <!-- Highest Wins -->
+        <div class="lb-panel" id="lb-panel-most-wins">
+            <div class="lb-loading" id="lb-loading-most-wins">Loading…</div>
+        </div>
+
+        <!-- Highest Losses -->
+        <div class="lb-panel" id="lb-panel-most-losses">
+            <div class="lb-loading" id="lb-loading-most-losses">Loading…</div>
+        </div>
+
+        <!-- Top Club Rank -->
+        <div class="lb-panel" id="lb-panel-club-rank">
+            <div class="lb-loading" id="lb-loading-club-rank">Loading…</div>
+        </div>
+
+        <!-- Most Tournaments Won -->
+        <div class="lb-panel" id="lb-panel-tournaments">
+            <div class="lb-loading" id="lb-loading-tournaments">Loading…</div>
+        </div>
+
+    </div><!-- end lb-wrap -->
+    </div><!-- end menu-leaderboard -->
+
+    <!-- ═══════════════════════════════════════ CLUBS SCREEN ══════════════════════════════════════ -->
+    <div id="menu-clubs" class="screen" style="display:none;">
+    <div class="clubs-wrap">
+
+        <div class="clubs-header">
+            <span class="clubs-title">🛡 Clubs</span>
+            <button class="clubs-close-x" onclick="playSfx('menuClick'); toggle('menu-clubs', false)">‹ Back</button>
+        </div>
+
+        <!-- Tab bar — Club Stats & Tournament only shown when in a club (set by JS) -->
+        <div class="clubs-tabs" id="clubs-tab-bar">
+            <button class="clubs-tab active" id="clubs-tab-my-club"     onclick="switchClubsTab('my-club')">My Club</button>
+            <button class="clubs-tab" id="clubs-tab-stats"              onclick="switchClubsTab('leaderboard')" style="display:none;">Club Stats</button>
+            <button class="clubs-tab" id="clubs-tab-browse"             onclick="switchClubsTab('browse')">Browse</button>
+            <button class="clubs-tab" id="clubs-tab-tournament"         onclick="switchClubsTab('tournament')" style="display:none;">Tournament</button>
+        </div>
+
+        <!-- ░░ MY CLUB ░░ -->
+        <div class="clubs-panel active" id="clubs-panel-my-club">
+            <!-- Shown when not in a club -->
+            <div id="clubs-no-club">
+                <div class="clubs-auth-notice">
+                    <div class="clubs-auth-icon">🛡</div>
+                    <div class="clubs-auth-msg">You are not in a club</div>
+                    <div class="clubs-auth-sub">Join or create a club to compete with others, share decks, and climb the ranks together.</div>
+                    <div id="clubs-no-club-authed" style="display:none; flex-direction:column; gap:8px; width:100%; align-items:center; margin-top:4px;">
+                        <button class="clubs-search-btn" style="min-width:180px; padding:9px 0;" onclick="switchClubsTab('browse')">🔍 Browse Clubs</button>
+                        <button class="clubs-search-btn" style="min-width:180px; padding:9px 0; background:rgba(60,30,5,0.8); border-color:rgba(180,130,40,0.5);" onclick="_clubsOpenCreateModal()">⚔ Found a Club</button>
+                    </div>
+                    <span id="clubs-no-club-guest" class="clubs-coming-badge">Sign in to join or create a club</span>
+                </div>
+            </div>
+            <!-- Shown when in a club (populated by JS) -->
+            <div id="clubs-my-club-card" style="display:none;">
+                <div class="club-card">
+                    <div class="club-card-header">
+                        <div class="club-badge" id="my-club-badge">⚔️</div>
+                        <div class="club-info">
+                            <div class="club-name" id="my-club-name">—</div>
+                            <div class="club-meta">
+                                <span id="my-club-members">0</span> members ·
+                                <span id="my-club-rank">#—</span> ranked
+                            </div>
+                        </div>
+                        <span class="club-tag" id="my-club-tag">#TAG</span>
+                    </div>
+                    <div class="club-desc" id="my-club-desc"></div>
+                    <div class="club-stats-row">
+                        <div class="club-stat">
+                            <div class="club-stat-val" id="my-club-wins">0</div>
+                            <div class="club-stat-label">Club Wins</div>
+                        </div>
+                        <div class="club-stat">
+                            <div class="club-stat-val" id="my-club-trophies">0</div>
+                            <div class="club-stat-label">Trophies</div>
+                        </div>
+                        <div class="club-stat">
+                            <div class="club-stat-val" id="my-club-streak">0</div>
+                            <div class="club-stat-label">Win Streak</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" style="margin-top:4px;" onclick="leaveClub()">Leave Club</button>
+            </div>
+        </div>
+
+        <!-- ░░ LEADERBOARD ░░ -->
+        <div class="clubs-panel" id="clubs-panel-leaderboard">
+            <div id="clubs-lb-list">
+                <div class="clubs-auth-notice">
+                    <div class="clubs-auth-icon">🏆</div>
+                    <div class="clubs-auth-msg">Club Rankings</div>
+                    <div class="clubs-auth-sub">Top clubs by combined member wins will appear here once the system is live.</div>
+                    <span class="clubs-coming-badge">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ░░ BROWSE ░░ -->
+        <div class="clubs-panel" id="clubs-panel-browse">
+            <div class="clubs-search-row">
+                <input class="clubs-search-input" id="clubs-search-input" type="text" placeholder="Search by name or tag…" oninput="searchClubs()" />
+                <button class="clubs-search-btn" onclick="searchClubs()">Search</button>
+            </div>
+            <div id="clubs-browse-list">
+                <div class="clubs-auth-notice" style="padding-top:16px;">
+                    <div class="clubs-auth-icon">🔍</div>
+                    <div class="clubs-auth-sub">Club search will be available once Supabase is connected.</div>
+                    <span class="clubs-coming-badge">Coming Soon</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ░░ TOURNAMENT ░░ -->
+        <div class="clubs-panel" id="clubs-panel-tournament">
+            <div id="clubs-tourn-no-club">
+                <div class="clubs-auth-notice">
+                    <div class="clubs-auth-icon">⚔️</div>
+                    <div class="clubs-auth-msg">Join a Club First</div>
+                    <div class="clubs-auth-sub">You must be in a club to participate in club tournaments.</div>
+                </div>
+            </div>
+            <div id="clubs-tourn-main" style="display:none; flex-direction:column; gap:12px;">
+                <!-- Active tournaments -->
+                <div class="clubs-col-label">Active Tournaments</div>
+                <div id="clubs-tourn-list">
+                    <div class="clubs-auth-notice" style="padding:12px 0;">
+                        <div class="clubs-auth-sub">No active club tournaments. Challenge another club to start one.</div>
+                    </div>
+                </div>
+                <!-- Challenge another club -->
+                <div class="clubs-col-label" style="margin-top:4px;">Challenge a Club</div>
+                <div style="display:flex;gap:8px;">
+                    <input class="clubs-search-input" id="clubs-tourn-tag-input" type="text" maxlength="5"
+                        placeholder="Enter club tag e.g. ISP"
+                        oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+                    <button class="clubs-search-btn" onclick="clubChallenge()">⚔ Challenge</button>
+                </div>
+                <div id="clubs-tourn-status" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#6b4f2a;min-height:14px;"></div>
+                <!-- Pending challenges -->
+                <div class="clubs-col-label">Pending Challenges</div>
+                <div id="clubs-tourn-pending">
+                    <div style="font-family:'Cinzel',serif;font-size:9px;color:rgba(100,65,20,0.4);font-style:italic;">No pending challenges.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Club Modal (popup) -->
+        <div id="clubs-create-modal" style="display:none; position:absolute; inset:0; z-index:500; align-items:center; justify-content:center; background:rgba(0,0,0,0.72); backdrop-filter:blur(4px);">
+            <div style="background:linear-gradient(160deg,#1a1005 0%,#0d0800 100%); border:1px solid rgba(140,95,25,0.45); border-radius:12px; padding:28px 30px; width:90%; max-width:380px; position:relative; font-family:'Cinzel',serif;">
+                <button onclick="_clubsCloseCreateModal()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#6b4f2a;font-size:18px;cursor:pointer;">✕</button>
+                <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#c8a460;margin-bottom:4px;">⚔ Found a Club</div>
+                <div style="font-family:'IM Fell English',serif;font-size:11px;color:rgba(140,95,30,0.6);font-style:italic;margin-bottom:16px;">Gather your allies and forge a legacy.</div>
+                <div class="clubs-form-label">Club Name</div>
+                <input class="clubs-form-input" id="club-create-name" type="text" maxlength="32" placeholder="e.g. Iron Serpents" style="margin-bottom:10px;" />
+                <div class="clubs-form-label">Tag (3–5 chars)</div>
+                <input class="clubs-form-input" id="club-create-tag" type="text" maxlength="5" placeholder="e.g. ISP" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')" style="margin-bottom:10px;" />
+                <div class="clubs-form-label">Badge Emoji</div>
+                <input class="clubs-form-input" id="club-create-badge" type="text" maxlength="4" placeholder="⚔️" style="margin-bottom:10px;" />
+                <div class="clubs-form-label">Description</div>
+                <textarea class="clubs-form-input" id="club-create-desc" maxlength="160" placeholder="Tell adventurers about your club…" style="margin-bottom:14px;"></textarea>
+                <button class="clubs-search-btn" style="width:100%;padding:10px 0;" onclick="createClub()">⚔ Found Club</button>
+                <div id="club-create-status" style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#6b4f2a;min-height:14px;margin-top:8px;text-align:center;"></div>
+            </div>
+        </div>
+
+    </div><!-- end clubs-wrap -->
+    </div><!-- end menu-clubs -->
+
+    <!-- ═══════════════════════════════════════ PROFILE SCREEN ══════════════════════════════════════ -->
+    <div id="menu-profile" class="screen" style="display:none;">
+    <div class="prf-wrap">
+        <!-- Profile content — always visible, no account required -->
+        <div id="prf-content-wrap">
+
+        <!-- Cover -->
+        <div class="prf-cover" id="profile-cover-banner">
+            <div class="prf-cover-btns">
+                <button class="prf-edit-btn" onclick="openProfileEdit()">✎ Edit Profile</button>
+                <button class="prf-edit-btn" onclick="openPrefSidebar()" style="background:rgba(20,10,2,0.7);">⚙ Prefs</button>
+                <button class="prf-close-x" onclick="playSfx('menuClick'); toggle('menu-profile', false)">✕</button>
+            </div>
+        </div>
+
+        <!-- Main card -->
+        <div class="prf-card">
+            <div class="prf-avatar-row">
+                <div class="prf-avatar-wrap">
+                    <div class="profile-avatar prf-avatar" id="profile-avatar-display">⚔️</div>
+                </div>
+            </div>
+            <div class="prf-username" id="profile-view-username">Wanderer</div>
+            <div class="prf-sub">
+                <span class="prf-club-title" id="profile-club-title">⚔ Wanderer</span>
+                <span class="prf-discord" id="profile-view-discord">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="opacity:0.4; flex-shrink:0;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.030z"/></svg>
+                    <span id="profile-view-discord-text">—</span>
+                </span>
+            </div>
+            <div class="prf-bio" id="profile-view-bio">No bio set.</div>
+            <div id="profile-view-socials" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;"></div>
+            <!-- Level / XP display -->
+            <div id="prf-rank-badge" style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span id="prf-rank-tier-label" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#c8a460;">Iron</span>
+                    <span id="prf-rank-score-label" style="font-family:'Cinzel',serif;font-size:9px;color:#5a3a10;letter-spacing:1px;">Level <span id="prf-level-num">1</span></span>
+                </div>
+                <div style="width:180px;height:6px;background:rgba(255,200,60,.08);border:1px solid rgba(140,95,25,.25);border-radius:999px;overflow:hidden;">
+                    <div id="prf-xp-bar-fill" style="height:100%;width:0%;background:linear-gradient(90deg,#8a6010,#c8a020,#e8d060);border-radius:999px;transition:width .6s ease;"></div>
+                </div>
+                <span id="prf-xp-to-next" style="font-family:'Cinzel',serif;font-size:7px;letter-spacing:1.5px;color:rgba(140,95,25,.5);">0 XP to next level</span>
+            </div>
+            <div class="prf-stats-row">
+                <div class="prf-stat"><div class="prf-stat-val" id="pstat-wins">0</div><div class="prf-stat-label">Wins</div></div>
+                <div class="profile-stat-divider"></div>
+                <div class="prf-stat"><div class="prf-stat-val" id="pstat-losses">0</div><div class="prf-stat-label">Losses</div></div>
+                <div class="profile-stat-divider"></div>
+                <div class="prf-stat"><div class="prf-stat-val" id="pstat-streak">0</div><div class="prf-stat-label">Best Streak</div></div>
+                <div class="profile-stat-divider"></div>
+                <div class="prf-stat"><div class="prf-stat-val" id="pstat-achs">0</div><div class="prf-stat-label">Achievements</div></div>
+            </div>
+            <div class="prf-footer">
+                <div class="profile-fav-deck" id="profile-fav-deck">
+                    <span class="profile-fav-deck-icon" id="profile-fav-deck-icon">⚔️</span>
+                    <span class="profile-fav-deck-name" id="profile-fav-deck-name">Standard</span>
+                    <span class="profile-fav-deck-badge">Fav Deck</span>
+                </div>
+                <span id="profile-member-since" style="font-family:'Cinzel',serif; font-size:9px; color:#4a3010; letter-spacing:1px;">Member since: —</span>
+            </div>
+        </div>
+
+        <!-- Pinned Achievement -->
+        <div class="prf-section-card">
+            <div class="prf-section-header">
+                <span>✦ Pinned Achievement</span>
+                <button class="profile-pin-change-btn" onclick="openPinPicker()" style="font-size:8px; padding:3px 10px;">Change</button>
+            </div>
+            <div id="profile-pinned-display" class="profile-top5-grid"></div>
+            <div style="display:none;"><div id="profile-pinned-ach"><div id="profile-pinned-icon">🏆</div><div id="profile-pinned-name">No achievement pinned</div><div id="profile-pinned-rarity"></div></div></div>
+            <div class="profile-pin-picker" id="profile-pin-picker" style="display:none;">
+                <div class="cdb-label" style="margin-bottom:6px;">Select Achievement to Display</div>
+                <div class="profile-pin-grid" id="profile-pin-grid"></div>
+                <button class="btn" style="min-width:100%; margin-top:8px; padding:7px; font-size:10px;" onclick="closePinPicker()">Done</button>
+            </div>
+        </div>
+
+        <!-- Recent Match History -->
+        <div class="prf-section-card">
+            <div class="prf-section-header"><span>✦ Recent Matches</span></div>
+            <div id="profile-match-history-empty" style="font-family:'IM Fell English',serif;font-size:11px;color:rgba(140,95,30,0.5);font-style:italic;text-align:center;padding:12px 0;">No matches recorded yet.</div>
+            <div id="profile-match-history" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+
+    </div><!-- end prf-content-wrap -->
+    </div><!-- end prf-wrap -->
+    </div>
+    <!-- ═══════════════════════════════════════ END PROFILE SCREEN ════════════════════════════════════ -->
+
+    <!-- ═══════════════════ PROFILE EDIT MODAL ═══════════════════ -->
+    <!-- Hidden file inputs for image uploads -->
+    <input type="file" id="avatar-file-input" accept="image/*" style="display:none;" onchange="_onAvatarFileChange(event)">
+    <input type="file" id="banner-file-input" accept="image/*" style="display:none;" onchange="_onBannerFileChange(event)">
+
+    <div id="profile-edit-modal" style="display:none; position:absolute; inset:0; z-index:3000; align-items:center; justify-content:center; background:rgba(0,0,0,0.75); border-radius:17px; overflow-y:auto;">
+        <div class="profile-edit-modal-box">
+            <div class="profile-edit-modal-header">
+                <span style="font-family:'Cinzel',serif; font-size:13px; letter-spacing:3px; color:#c8a460; text-transform:uppercase;">✎ Edit Profile</span>
+                <button class="profile-edit-modal-close" onclick="closeProfileEdit()">✕</button>
+            </div>
+
+            <!-- Banner preview + picker -->
+            <div class="cdb-label" style="margin-bottom:4px;">Banner</div>
+            <div class="profile-banner-preview" id="profile-banner-preview" onclick="openBannerPicker()">
+                <div class="profile-banner-edit-hint">✎ Change Banner</div>
+            </div>
+            <div class="profile-banner-picker" id="profile-banner-picker">
+                <div class="cdb-label" style="margin-bottom:2px;">Choose Gradient</div>
+                <div class="profile-banner-grid" id="profile-banner-grid"></div>
+                <button class="profile-banner-upload-btn" onclick="triggerBannerUpload()">📁 Upload Custom Image</button>
+                <button class="btn" style="min-width:100%; padding:5px; font-size:10px; margin-top:4px;" onclick="closeBannerPicker()">Done</button>
+            </div>
+
+            <!-- Avatar + Username row -->
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px; margin-top:10px;">
+                <div style="position:relative; flex-shrink:0;">
+                    <div class="profile-avatar" id="profile-edit-avatar-display" style="width:64px;height:64px;font-size:30px;overflow:hidden;display:flex;align-items:center;justify-content:center;line-height:1;">⚔️</div>
+                    <button class="profile-avatar-edit-btn" onclick="openAvatarPicker()" title="Change avatar" style="bottom:-4px;right:-4px;">✎</button>
+                </div>
+                <div style="flex:1;">
+                    <div class="cdb-label">Username</div>
+                    <input class="cdb-input profile-input" id="profile-username" type="text" maxlength="24" placeholder="Enter your name...">
+                </div>
+            </div>
+
+            <!-- Avatar picker -->
+            <div class="profile-avatar-picker" id="profile-avatar-picker" style="display:none; margin-bottom:10px;">
+                <div class="cdb-label" style="margin-bottom:6px; text-align:center;">Choose Avatar</div>
+                <div class="profile-avatar-grid" id="profile-avatar-grid"></div>
+                <button class="profile-avatar-upload-btn" onclick="triggerAvatarUpload()">📁 Upload Custom Image</button>
+                <button class="btn" style="min-width:100%; margin-top:8px; padding:6px; font-size:10px;" onclick="closeAvatarPicker()">Done</button>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+                <div>
+                    <div class="cdb-label">Discord</div>
+                    <div class="profile-social-row" style="margin:0;">
+                        <span class="profile-social-icon"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.030z"/></svg></span>
+                        <input class="cdb-input profile-input profile-social-input" id="profile-discord" type="text" maxlength="64" placeholder="Discord username" style="flex:1;">
+                    </div>
+                </div>
+                <div>
+                    <div class="cdb-label">X / Twitter</div>
+                    <div class="profile-social-row" style="margin:0;">
+                        <span class="profile-social-icon"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
+                        <input class="cdb-input profile-input profile-social-input" id="profile-twitter" type="text" maxlength="64" placeholder="@handle" style="flex:1;">
+                    </div>
+                </div>
+                <div>
+                    <div class="cdb-label">YouTube</div>
+                    <div class="profile-social-row" style="margin:0;">
+                        <span class="profile-social-icon"><svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.8 2 12 2 12 2s-4.8 0-7.3.2c-.6 0-1.9.1-3 1.3C.8 4.3.5 6.2.5 6.2S.2 8.4.2 10.6v2.1c0 2.2.3 4.4.3 4.4s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7 21.2 12 21.2 12 21.2s4.8 0 7.3-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.2.3-4.4v-2c0-2.2-.3-4.3-.3-4.3zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg></span>
+                        <input class="cdb-input profile-input profile-social-input" id="profile-youtube" type="text" maxlength="64" placeholder="Channel URL" style="flex:1;">
+                    </div>
+                </div>
+                <div>
+                    <div class="cdb-label">itch.io</div>
+                    <div class="profile-social-row" style="margin:0;">
+                        <span class="profile-social-icon" style="font-size:12px;">🎮</span>
+                        <input class="cdb-input profile-input profile-social-input" id="profile-itch" type="text" maxlength="64" placeholder="Page URL" style="flex:1;">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="cdb-label">Bio</div>
+                <textarea class="cdb-input profile-input" id="profile-bio" maxlength="160" placeholder="A few words about yourself..." style="height:52px; resize:none; line-height:1.5; width:100%;"></textarea>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:12px;">
+                <div class="profile-save-msg" id="profile-save-msg" style="margin:0;"></div>
+                <button class="btn primary" style="font-size:11px; padding:8px 24px;" onclick="saveProfile()">✦ Save</button>
+            </div>
+        </div>
+    </div>
+    <!-- ═══════════════════ END PROFILE EDIT MODAL ═══════════════════ -->
+
+    <div id="menu-achievements" class="screen" style="display:none;">
+        <div class="ach-header">
+            <h2 style="margin:0">🏆 Achievements</h2>
+            <div class="ach-progress-wrap">
+                <span id="ach-count">0 / 0</span> Unlocked
+                <div class="ach-progress-bar"><div class="ach-progress-fill" id="ach-prog-fill" style="width:0%"></div></div>
+            </div>
+        </div>
+        <div class="ach-filter-row">
+            <div class="ach-filter active" onclick="filterAch('all',this)">All</div>
+            <div class="ach-filter" onclick="filterAch('unlocked',this)">Unlocked</div>
+            <div class="ach-filter" onclick="filterAch('locked',this)">Locked</div>
+            <div class="ach-filter" onclick="filterAch('common',this)">Common</div>
+            <div class="ach-filter" onclick="filterAch('uncommon',this)">Uncommon</div>
+            <div class="ach-filter" onclick="filterAch('rare',this)">Rare</div>
+            <div class="ach-filter" onclick="filterAch('epic',this)">Epic</div>
+            <div class="ach-filter" onclick="filterAch('legendary',this)">Legendary</div>
+        </div>
+        <div class="ach-grid" id="ach-grid"></div>
+        <div class="ach-save-row">
+            <button class="btn" style="min-width:140px;padding:8px 20px;font-size:10px;border-color:rgba(139,0,0,0.5);color:#c06060;" onclick="confirmResetAchievements()">⚠ Reset Achievements</button>
+            <span class="ach-save-msg" id="ach-save-msg"></span>
+        </div>
+        <div class="deco-rule" style="margin-top:10px"></div>
+        <button class="btn" onclick="playSfx('menuClick'); toggle('menu-achievements', false)">Close</button>
+    </div>
+
+    
+    <div id="ach-toast">
+        <div id="ach-toast-icon">🏆</div>
+        <div id="ach-toast-text">
+            <div id="ach-toast-title">Achievement Unlocked</div>
+            <div id="ach-toast-name"></div>
+        </div>
+    </div>
+
+    
+    <!-- ═══════════════════════════════════════ SHOP SCREEN ═══════════════════════════════════════ -->
+    <div id="menu-shop" class="screen" style="display:none; overflow:hidden;">
+    <div class="shop-wrap">
+
+        <!-- ── Header ── -->
+        <div class="shop-header">
+            <div class="shop-header-left">
+                <button class="shop-back-btn" onclick="playSfx('menuClick'); toggle('menu-shop', false)">‹ Back</button>
+                <div class="shop-title-block">
+                    <h2 class="shop-title">⚜ Arcane Emporium</h2>
+                    <div class="shop-subtitle">Spend your gold. Forge your legend.</div>
+                </div>
+            </div>
+            <div class="shop-currency-display">
+                <div class="shop-currency-row">
+                    <span class="shop-currency-icon">🪙</span>
+                    <span class="shop-currency-amount" id="shop-gold-amt">0</span>
+                    <span class="shop-currency-label">Gold</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="shop-rule"></div>
+
+        <!-- ── Tabs ── -->
+        <div class="shop-tabs">
+            <button class="shop-tab active" onclick="switchShopTab('featured')"  data-tab="featured">
+                <span class="shop-tab-icon">✦</span> Featured
+            </button>
+            <button class="shop-tab" onclick="switchShopTab('cosmetics')" data-tab="cosmetics">
+                <span class="shop-tab-icon">🎨</span> Cosmetics
+            </button>
+            <button class="shop-tab" onclick="switchShopTab('bundles')"   data-tab="bundles">
+                <span class="shop-tab-icon">📦</span> Bundles
+            </button>
+            <button class="shop-tab" onclick="switchShopTab('gold-info')" data-tab="gold-info">
+                <span class="shop-tab-icon">🪙</span> How to Get Gold
+            </button>
+            <button class="shop-tab" onclick="switchShopTab('history')"   data-tab="history">
+                <span class="shop-tab-icon">📜</span> Purchase History
+            </button>
+        </div>
+
+        <!-- ══ FEATURED ══ -->
+        <div class="shop-panel active" id="shop-panel-featured">
+            <div class="shop-section-label">🏆 Top Cosmetics Today</div>
+            <div class="shop-grid" id="shop-feat-items" style="grid-template-columns:repeat(auto-fill,minmax(155px,1fr));"></div>
+            <div class="shop-empty-state" id="shop-feat-no-items" style="display:none;padding:20px 0;">
+                <div class="shop-empty-icon">🪄</div>
+                <div class="shop-empty-title">No data yet</div>
+                <div class="shop-empty-sub">Purchase counts will appear here as players buy items.</div>
+            </div>
+            <div class="shop-section-label" style="margin-top:8px;">📦 Top Bundles Today</div>
+            <div id="shop-feat-bundles"></div>
+            <div class="shop-empty-state" id="shop-feat-no-bundles" style="display:none;padding:16px 0;">
+                <div class="shop-empty-sub">Bundle popularity will show here once purchases are made.</div>
+            </div>
+        </div>
+
+        <!-- ══ COSMETICS ══ -->
+        <div class="shop-panel" id="shop-panel-cosmetics">
+            <div class="shop-filter-bar">
+                <button class="shop-filter active" onclick="switchShopSub('all',this)">All</button>
+                <button class="shop-filter" onclick="switchShopSub('hats',this)">🎩 Hats</button>
+                <button class="shop-filter" onclick="switchShopSub('auras',this)">✨ Auras</button>
+                <button class="shop-filter" onclick="switchShopSub('cards',this)">🃏 Cards</button>
+                <button class="shop-filter" onclick="switchShopSub('fonts',this)">🔤 Fonts</button>
+            </div>
+            <div class="shop-grid" id="shop-grid-cosmetics"></div>
+            <div class="shop-empty-state" id="shop-empty-cosmetics" style="display:none;">
+                <div class="shop-empty-icon">🎨</div>
+                <div class="shop-empty-title">None Listed Today</div>
+                <div class="shop-empty-sub">No items of this type are in today's rotation.</div>
+            </div>
+        </div>
+
+        <!-- ══ BUNDLES ══ -->
+        <div class="shop-panel" id="shop-panel-bundles">
+            <div class="shop-section-label">📦 Today's Bundles</div>
+            <div class="shop-section-sub">Groups of 3–5 items at 15% off the combined price. New bundles rotate daily.</div>
+            <div id="shop-grid-bundles" style="display:flex;flex-direction:column;gap:14px;"></div>
+            <div class="shop-empty-state" id="shop-empty-bundles" style="display:none;">
+                <div class="shop-empty-icon">📦</div>
+                <div class="shop-empty-title">No Bundles Today</div>
+                <div class="shop-empty-sub">Check back tomorrow — bundle selection rotates daily.</div>
+            </div>
+        </div>
+
+        <!-- ══ HOW TO GET GOLD ══ -->
+        <div class="shop-panel" id="shop-panel-gold-info">
+            <div class="shop-section-label">🪙 How to Earn Gold</div>
+            <div class="shop-section-sub">Gold is earned through play. It cannot be purchased.</div>
+            <div class="shop-gold-info-card">
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">⚡</span><div><strong>Win an online match</strong><span class="shop-gold-info-val">+25 🪙</span></div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">🏆</span><div><strong>Win a tournament</strong><span class="shop-gold-info-val">+150 🪙</span></div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">🔗</span><div><strong>Land a triple crit chain</strong><span class="shop-gold-info-val">+10 🪙</span></div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">📅</span><div><strong>Daily login</strong><span class="shop-gold-info-val">+5 🪙</span></div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">⚙</span><div><strong>Complete an achievement</strong><span class="shop-gold-info-val">+15–50 🪙</span></div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">🎯</span><div><strong>First win of the day</strong><span class="shop-gold-info-val">+20 🪙</span></div></div>
+                <div class="shop-gold-info-note">The rotation resets every day at midnight UTC. Items not purchased today may return in a future rotation.</div>
+            </div>
+            <div class="shop-section-label" style="margin-top:16px;">📋 About the Shop</div>
+            <div class="shop-gold-info-card">
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">🔄</span><div>10 items are listed each day, drawn from a pool of 20. All players see the same rotation.</div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">📦</span><div>Bundles group 3–5 items at 15% off. No two items of the same type can appear in the same bundle.</div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">↩</span><div>Purchases can be refunded at any time for 80% of the gold paid back.</div></div>
+                <div class="shop-gold-info-row"><span class="shop-gold-info-icon">🪙</span><div>Gold is the only currency. There are no premium currencies, battle passes, or paid purchases.</div></div>
+            </div>
+        </div>
+
+        <!-- ══ PURCHASE HISTORY ══ -->
+        <div class="shop-panel" id="shop-panel-history">
+            <div class="shop-section-label">📜 Recent Purchases</div>
+            <div class="shop-section-sub">Showing your last 8 purchases. Refunds return 80% of the gold paid.</div>
+            <div id="shop-history-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+            <div class="shop-empty-state" id="shop-history-empty">
+                <div class="shop-empty-icon">📜</div>
+                <div class="shop-empty-title">No Purchases Yet</div>
+                <div class="shop-empty-sub">Your transaction history will appear here once you make your first purchase.</div>
+            </div>
+        </div>
+
+    </div><!-- end shop-wrap -->
+    </div><!-- end menu-shop -->
+
+    
+
+        <div id="menu-credits" class="screen" style="display:none; overflow-y:auto; align-items:center; padding:32px 40px 24px;">
+        <div class="screen-content-wrap" style="max-width:600px; align-items:center;">
+        <h2>✦ Credits</h2>
+        <div class="deco-rule"></div>
+        <div class="credits-body">
+            <div style="margin-bottom:24px;">
+                <div class="credit-name" style="font-size:16px; letter-spacing:3px;">@r3ctrr.313</div>
+            </div>
+            <div style="margin-bottom:24px; font-size:13px; color:#c8a460; line-height:2.1; text-align:center; font-family:'IM Fell English', serif;">
+                Big thanks to all the play testers who helped shape the game,<br>
+                all the content creators who played it,<br>
+                everyone who offered or did help along the way,<br>
+                and everyone who has or will make mods for this game.
+            </div>
+            <div style="font-size:11px; color:#6b4f2a; font-style:italic; letter-spacing:1px;">
+                Built for the HTML Challenge
+            </div>
+        </div>
+        <div class="deco-rule"></div>
+        <button class="btn" onclick="playSfx('menuClick'); toggle('menu-credits', false)">Close</button>
+        </div><!-- end screen-content-wrap -->
+    </div>
+
+    <div id="menu-decks" class="screen" style="display:none; overflow-y:auto; align-items:center; padding:32px 40px 0;">
+        <div class="screen-content-wrap" style="max-width:860px;">
+        <h2 style="margin-bottom:4px; text-align:center;">Choose Your Deck</h2>
+        <div style="font-family:'IM Fell English',serif; font-size:13px; color:#6b4f2a; margin-bottom:14px; font-style:italic; text-align:center;">Both players use the selected deck</div>
+        <div class="deck-scroll-wrap">
+            <div class="deck-grid" id="deck-grid"></div>
+        </div>
+        <div class="deck-save-row">
+            <span class="deck-save-msg" id="deck-save-msg">Saved!</span>
+        </div>
+        
+        <div id="load-deck-panel" style="display:none; max-width:460px; width:100%; margin:0 auto 4px;">
+            <div class="load-deck-inner">
+                <div class="cdb-label" style="margin-bottom:5px;">&#128279; Paste Deck Code</div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <input class="load-deck-input" id="load-deck-input" type="text" placeholder="Paste code here..." autocomplete="off" spellcheck="false">
+                    <button class="load-deck-confirm-btn" onclick="confirmLoadDeck()">Load</button>
+                    <button class="load-deck-confirm-btn cancel" onclick="closeLoadDeckPanel()">&#10005;</button>
+                </div>
+                <div class="load-deck-msg" id="load-deck-msg"></div>
+            </div>
+        </div>
+        <div class="deco-rule" style="margin-top:8px; margin-bottom:4px;"></div>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding-bottom:24px;">
+            <button class="btn primary" onclick="playSfx('menuClick'); toggle('menu-decks', false)">✦ Confirm</button>
+            <button class="btn" onclick="playSfx('menuClick'); openLoadDeckPanel()">🔗 Load Deck</button>
+            <button class="btn" onclick="playSfx('menuClick'); openCustomDeckBuilder()">✎ Make Your Own</button>
+        </div>
+        </div><!-- end screen-content-wrap -->
+    </div>
+
+    <div id="menu-custom-deck" class="screen" style="display:none; overflow-y:auto; align-items:center; padding:32px 40px 0;">
+        <div class="screen-content-wrap" style="max-width:900px;">
+        <h2 style="margin-bottom:4px;">✎ Build Your Deck</h2>
+        <div style="font-family:'IM Fell English',serif; font-size:13px; color:#6b4f2a; margin-bottom:14px; font-style:italic; text-align:center;">Choose up to 9 cards · Give it a name · Enter the fray</div>
+        <div class="custom-deck-layout">
+            <div class="custom-deck-left">
+                <div>
+                    <div class="cdb-label">Deck Name</div>
+                    <input class="cdb-input" id="cdb-name" type="text" maxlength="28" placeholder="Name your deck..." oninput="refreshDeckPreview()">
+                </div>
+                <div>
+                    <div class="cdb-label">Description</div>
+                    <textarea class="cdb-input" id="cdb-desc" maxlength="120" placeholder="Describe your strategy..." oninput="refreshDeckPreview()"></textarea>
+                </div>
+                <div>
+                    <div class="cdb-label" style="margin-bottom:5px;">Deck Logo</div>
+                    <div class="logo-picker-grid" id="logo-picker-grid"></div>
+                </div>
+                <div class="cdb-label" style="margin-bottom:5px; margin-top:6px;">Select Cards (max 9)
+                    <span style="margin-left:8px;">
+                        <select id="cdb-filter-rarity" onchange="buildCardPickerGrid()" style="font-family:'Cinzel',serif;font-size:9px;background:rgba(10,5,0,0.8);border:1px solid rgba(100,65,20,0.4);color:#c8a460;padding:2px 4px;border-radius:3px;">
+                            <option value="">All Rarities</option>
+                            <option value="common">Common</option>
+                            <option value="uncommon">Uncommon</option>
+                            <option value="rare">Rare</option>
+                            <option value="epic">Epic</option>
+                            <option value="legendary">Legendary</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="card-picker-grid" id="card-picker-grid"></div>
+            </div>
+            <div class="custom-deck-right">
+                <div class="deck-preview-panel">
+                    <div class="deck-preview-title">Deck Preview</div>
+                    <div id="deck-preview-slots"></div>
+                    <div class="deck-slot-count ok" id="deck-slot-count">0 / 9 cards</div>
+                </div>
+                <div class="cdb-error" id="cdb-error"></div>
+                <input type="hidden" id="cdb-export-str" value="">
+                <input type="hidden" id="cdb-import-str" value="">
+                <div id="cdb-share-msg" style="display:none;"></div>
+                <div class="cdb-btn-row">
+                    <button class="btn primary" onclick="playSfx('menuClick'); saveCustomDeck()">Save Deck</button>
+                </div>
+                <div class="cdb-btn-row">
+                    <button class="btn" onclick="playSfx('menuClick'); toggle('menu-custom-deck',false); toggle('menu-decks',true)">← Back</button>
+                </div>
+            </div>
+        </div>
+        </div><!-- end screen-content-wrap -->
+    </div>
+
+    <div id="menu-start" class="screen" style="display:none; overflow-y:auto; align-items:center; padding:32px 40px 0;">
+        <button class="back-btn" onclick="playSfx('menuClick'); toggle('menu-start', false)" style="position:absolute;top:22px;left:28px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a07840;cursor:pointer;background:rgba(0,0,0,0.4);border:1px solid rgba(140,95,25,0.4);border-radius:6px;padding:5px 14px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:20;" onmouseover="this.style.color='#e8c870';this.style.borderColor='rgba(200,160,40,0.7)';this.style.background='rgba(0,0,0,0.6)'" onmouseout="this.style.color='#a07840';this.style.borderColor='rgba(140,95,25,0.4)';this.style.background='rgba(0,0,0,0.4)'">‹ Back</button>
+        <h2 style="margin-bottom:4px; text-align:center; width:100%;">Start</h2>
+        <p style="text-align:center;font-size:10px;letter-spacing:4px;color:#7a5a30;text-transform:uppercase;margin-bottom:22px;width:100%;">Choose your battle</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:660px; width:100%; margin:0 auto;">
+
+            <!-- Offline Match — always enabled -->
+            <div onclick="playSfx('menuClick'); initGame()" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,rgba(22,8,1,0.97),rgba(6,2,0,0.98));border:1px solid rgba(180,130,40,0.55);border-radius:6px;padding:0 0 18px;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,200,80,0.06);" onmouseover="this.style.borderColor='rgba(220,170,60,0.85)';this.style.boxShadow='0 6px 28px rgba(0,0,0,0.8),0 0 18px rgba(180,120,0,0.18)'" onmouseout="this.style.borderColor='rgba(180,130,40,0.55)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.6)'">
+                <div style="width:100%;background:rgba(200,160,60,0.1);border-bottom:1px solid rgba(180,130,40,0.3);padding:6px 0 4px;text-align:center;border-radius:6px 6px 0 0;margin-bottom:16px;">
+                    <span style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:#a07840;font-family:'Cinzel',serif;">Offline Match</span>
+                </div>
+                <div style="font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 14px rgba(255,180,0,0.3));">⚔</div>
+                <p style="font-size:10px;letter-spacing:1px;color:#7a5a30;text-align:center;padding:0 18px;line-height:1.7;font-family:'Cinzel',serif;">Battle against the AI. No internet required.</p>
+            </div>
+
+            <!-- Private Room — gated -->
+            <div id="start-btn-private" onclick="_startOnlineBtn(openPrivateRoomMenu)" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,rgba(22,8,1,0.97),rgba(6,2,0,0.98));border:1px solid rgba(180,130,40,0.55);border-radius:6px;padding:0 0 18px;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,200,80,0.06);" onmouseover="_startCardHover(this,true)" onmouseout="_startCardHover(this,false)">
+                <div style="width:100%;background:rgba(200,160,60,0.1);border-bottom:1px solid rgba(180,130,40,0.3);padding:6px 0 4px;text-align:center;border-radius:6px 6px 0 0;margin-bottom:16px;">
+                    <span style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:#a07840;font-family:'Cinzel',serif;">Private Room</span>
+                </div>
+                <div style="font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 14px rgba(255,180,0,0.3));">🔒</div>
+                <p style="font-size:10px;letter-spacing:1px;color:#7a5a30;text-align:center;padding:0 18px;line-height:1.7;font-family:'Cinzel',serif;">Host or join a private lobby. Invite friends, chat, and battle together.</p>
+            </div>
+
+            <!-- Find Match — gated -->
+            <div id="start-btn-match" onclick="_startOnlineBtn(openMatchmaking)" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,rgba(22,8,1,0.97),rgba(6,2,0,0.98));border:1px solid rgba(180,130,40,0.55);border-radius:6px;padding:0 0 18px;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,200,80,0.06);" onmouseover="_startCardHover(this,true)" onmouseout="_startCardHover(this,false)">
+                <div style="width:100%;background:rgba(200,160,60,0.1);border-bottom:1px solid rgba(180,130,40,0.3);padding:6px 0 4px;text-align:center;border-radius:6px 6px 0 0;margin-bottom:16px;">
+                    <span style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:#a07840;font-family:'Cinzel',serif;">Find Match</span>
+                </div>
+                <div style="font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 14px rgba(255,180,0,0.3));">🌐</div>
+                <p style="font-size:10px;letter-spacing:1px;color:#7a5a30;text-align:center;padding:0 18px;line-height:1.7;font-family:'Cinzel',serif;">Search for a random opponent online and battle.</p>
+            </div>
+
+            <!-- Join Tournament — locked until a tournament is active -->
+            <div id="start-btn-tournament" style="opacity:0.45;cursor:not-allowed;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,rgba(22,8,1,0.97),rgba(6,2,0,0.98));border:1px solid rgba(80,55,20,0.35);border-radius:6px;padding:0 0 18px;box-shadow:0 4px 20px rgba(0,0,0,0.6);">
+                <div style="width:100%;background:rgba(200,160,60,0.05);border-bottom:1px solid rgba(100,70,20,0.2);padding:6px 0 4px;text-align:center;border-radius:6px 6px 0 0;margin-bottom:16px;">
+                    <span style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:#6b4f2a;font-family:'Cinzel',serif;">Join Tournament</span>
+                </div>
+                <div style="font-size:52px;margin-bottom:14px;filter:drop-shadow(0 0 14px rgba(255,180,0,0.1));">🏆</div>
+                <p style="font-size:10px;letter-spacing:1px;color:#5a3a10;text-align:center;padding:0 18px;line-height:1.7;font-family:'Cinzel',serif;">Enter an official tournament and compete for glory.</p>
+                <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:2px;color:#5a2a0a;font-style:italic;">No tournament is currently active</div>
+            </div>
+        </div>
+
+        <!-- Not logged in notice — shown in the red-circle area below the grid -->
+        <div id="start-login-notice" style="display:none; max-width:660px; width:100%; margin:18px auto 0; padding:16px 22px; background:rgba(60,10,10,0.5); border:1px solid rgba(180,40,40,0.35); border-radius:8px; box-sizing:border-box;">
+            <p style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:#e87a7a;text-align:center;line-height:1.9;margin:0 0 10px 0;">
+                🔒 <strong>You are not logged in.</strong><br>
+                <span style="font-size:9px;color:rgba(220,120,120,0.75);letter-spacing:1.5px;">Private Room, Find Match, and Join Tournament all require an account.<br>Click <strong style="color:#e8a87a;">👤 Login</strong> in the top right to sign in or create a free account.</span>
+            </p>
+            <div style="text-align:center;">
+                <button onclick="_toggleWhyAccount()" style="background:none;border:1px solid rgba(180,40,40,0.3);border-radius:4px;color:rgba(200,100,100,0.6);font-family:'Cinzel',serif;font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;cursor:pointer;transition:color 0.2s,border-color 0.2s;" onmouseover="this.style.color='rgba(230,140,140,0.9)';this.style.borderColor='rgba(200,60,60,0.5)'" onmouseout="this.style.color='rgba(200,100,100,0.6)';this.style.borderColor='rgba(180,40,40,0.3)'">
+                    Why do these require an account? ▾
+                </button>
+            </div>
+            <div id="start-why-account" style="display:none; margin-top:12px; padding:12px 14px; background:rgba(40,5,5,0.5); border:1px solid rgba(140,30,30,0.25); border-radius:6px;">
+                <p style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;color:rgba(200,130,130,0.8);line-height:1.9;margin:0;">
+                    <strong style="color:rgba(220,150,150,0.9);letter-spacing:2px;">Accountability</strong><br>
+                    Online features are account-gated because if a player breaks the rules — cheating, harassment, or unsportsmanlike conduct — we need to know who they are in order to issue a ban or time-out. Anonymous players cannot be held responsible for their actions.<br><br>
+                    <strong style="color:rgba(220,150,150,0.9);letter-spacing:2px;">Rewards &amp; Tournaments</strong><br>
+                    Tournaments award prizes and recognition to winners. Without an account, there is no way to verify who won, track standings, or deliver rewards to the right person. Your account is your identity in competition.
+                </p>
+            </div>
+        </div>
+        <div style="height:24px;"></div>
+    </div><!-- end menu-start -->
+
+    <div id="menu-settings" class="screen" style="display:none; overflow-y:auto; align-items:center; flex-direction:column; padding:32px 40px 0;">
+        <div class="screen-content-wrap">
+
+        <h2 style="margin-bottom:4px;">⚙ Settings</h2>
+        <div class="screen-subtitle">Customize your experience</div>
+        <div class="deco-rule" style="margin-bottom:18px;"></div>
+
+        <div class="settings-tabs">
+            <button class="settings-tab active" onclick="switchSettingsTab('accessibility')">Accessibility</button>
+            <button class="settings-tab" onclick="switchSettingsTab('looks')">Looks &amp; Themes</button>
+            <button class="settings-tab" onclick="switchSettingsTab('audio')">Audio</button>
+            <button class="settings-tab" onclick="switchSettingsTab('offline')">Offline / Bot</button>
+            <button class="settings-tab" onclick="switchSettingsTab('online')">Online / Matches</button>
+        </div>
+
+        <!-- ACCESSIBILITY -->
+        <div class="settings-tab-panel active" id="stab-accessibility">
+            <div class="settings-grid" style="gap:28px; padding-bottom:4px;">
+                <div class="settings-col">
+                    <div class="settings-section-label">Intro &amp; Flow</div>
+
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-skip-intro"> Skip intro on launch</label>
+                        <span class="settings-hint">Skips the SunCast Studios intro and goes straight to the main menu.</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-skip-forfeit"> Skip forfeit confirmation</label>
+                        <span class="settings-hint">Forfeits immediately without asking "are you sure?"</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-combat-log"> Show combat log</label>
+                        <span class="settings-hint">Displays a live feed of damage, heals and effects at the bottom of the board.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Motion &amp; Vision</div>
+
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-reduced"> Reduced Motion</label>
+                        <span class="settings-hint">Tones down screen shake, particles and card animations.</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-colorblind"> Colorblind Mode</label>
+                        <span class="settings-hint">Replaces colour-only cues with icons and patterns for better readability.</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-high-contrast"> High Contrast Text</label>
+                        <span class="settings-hint">Makes all body text brighter and heavier for easier reading.</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-shake" checked> Screen Shake</label>
+                        <span class="settings-hint">Shakes the board on heavy hits and crits. Turn off if it bothers you.</span>
+                    </div>
+                </div>
+
+                <div class="settings-col">
+                    <div class="settings-section-label">UI Scale</div>
+                    <div class="settings-item">
+                        <div class="settings-row">
+                            <span class="settings-label" id="scale-label">1.0×</span>
+                            <input type="range" id="opt-ui-scale" class="settings-slider" value="10" min="6" max="14" step="1"
+                                oninput="document.getElementById('scale-label').textContent=(this.value/10).toFixed(1)+'×'">
+                        </div>
+                        <span class="settings-hint">Scales the entire game window up or down. Requires Apply.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Animation Speed</div>
+                    <div class="settings-item">
+                        <div class="settings-row">
+                            <span class="settings-label" id="speed-label">1.0×</span>
+                            <input type="range" id="opt-speed" class="settings-slider" value="1" min="0.5" max="2" step="0.1"
+                                oninput="document.getElementById('speed-label').textContent=parseFloat(this.value).toFixed(1)+'×'">
+                        </div>
+                        <span class="settings-hint">0.5× slows everything down — 2.0× speeds it up. Affects cards, dice and transitions.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Update Log</div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-update-log" checked> Show update log on menu</label>
+                        <span class="settings-hint">Displays the changelog panel on the right side of the main menu.</span>
+                    </div>
+                </div>
+
+                <div class="settings-col">
+                    <div class="settings-section-label">UI Scale</div>
+                    <div class="settings-item">
+                        <div class="settings-row">
+                            <span class="settings-label" id="scale-label-2">1.0×</span>
+                            <input type="range" id="opt-ui-scale-2" class="settings-slider" value="10" min="6" max="14" step="1"
+                                oninput="document.getElementById('scale-label-2').textContent=(this.value/10).toFixed(1)+'×'">
+                        </div>
+                        <span class="settings-hint">Scales the entire game window up or down. Requires Apply.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Discord Rich Presence</div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-discord-rpc" checked onchange="if(typeof setDiscordRPC==='function') setDiscordRPC(this.checked)"> Enable Rich Presence</label>
+                        <span class="settings-hint" id="discord-rpc-hint">Shows your current game status on your Discord profile. Desktop app only.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Custom Rich Presence</div>
+                    <div class="settings-item">
+                        <div class="settings-row" style="gap:6px;">
+                            <input type="text" id="opt-rpc-custom-msg" maxlength="64"
+                                placeholder="e.g. Rolling for glory…"
+                                style="flex:1; background:rgba(10,5,0,0.85); border:1px solid rgba(100,65,20,0.5); border-radius:4px; color:#e8c87a; font-family:'Cinzel',serif; font-size:10px; padding:6px 8px; outline:none; letter-spacing:0.5px;"
+                                oninput="previewRpcMsg(this.value)">
+                        </div>
+                        <div id="rpc-msg-preview" style="font-family:Arial,sans-serif; font-size:10px; margin-top:3px; padding-left:2px; min-height:14px; color:#6b8a3a;"></div>
+                        <span class="settings-hint">Replaces the default status line on Discord. Leave blank to use the default. Profanity is filtered automatically.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOOKS & THEMES -->
+        <div class="settings-tab-panel" id="stab-looks">
+            <div class="settings-grid" style="gap:28px; padding-bottom:4px;">
+                <div class="settings-col">
+                    <div class="settings-section-label">Color Theme</div>
+                    <div class="settings-item">
+                        <div id="opt-theme-picker" style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:4px;">
+                            <button class="theme-swatch active" data-theme="default"   title="Default"    style="background:linear-gradient(135deg,#e8d5b0 0%,#1a0e05 100%)"><span class="theme-swatch-label">Default</span></button>
+                            <button class="theme-swatch" data-theme="space"     title="Space"      style="background:linear-gradient(135deg,#0a0a2e 0%,#1a0a3a 50%,#000510 100%)"><span class="theme-swatch-label">Space</span></button>
+                            <button class="theme-swatch" data-theme="aero"      title="Frutiger Aero" style="background:linear-gradient(135deg,#7ec8e3 0%,#a8d8ea 40%,#d4f0f0 70%,#b8e0d2 100%)"><span class="theme-swatch-label">Aero</span></button>
+                            <button class="theme-swatch" data-theme="cyberpunk" title="Cyberpunk"  style="background:linear-gradient(135deg,#0d0020 0%,#1a0035 50%,#0a001a 100%);box-shadow:inset 0 0 12px rgba(255,0,180,0.3)"><span class="theme-swatch-label">Cyberpunk</span></button>
+                            <button class="theme-swatch" data-theme="scourge"   title="Scourge"    style="background:linear-gradient(135deg,#1a0010 0%,#0d0008 50%,#200018 100%)"><span class="theme-swatch-label">Scourge</span></button>
+                            <button class="theme-swatch" data-theme="wiki"      title="Wiki"       style="background:linear-gradient(135deg,#fff 0%,#f8f9fa 50%,#eaecf0 100%);border:1px solid #aaa"><span class="theme-swatch-label" style="color:#202122!important;text-shadow:none!important;">Wiki</span></button>
+                        </div>
+                        <span class="settings-hint" id="theme-hint">Changes the colour palette across the whole game. Requires Apply.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Graphics Quality</div>
+                    <div class="settings-item">
+                        <div class="settings-btn-group" id="opt-graphics" style="margin-bottom:4px;">
+                            <button class="settings-opt-btn" data-val="low" onclick="previewGraphics('low')">Low</button>
+                            <button class="settings-opt-btn active" data-val="mid" onclick="previewGraphics('mid')">Mid</button>
+                            <button class="settings-opt-btn" data-val="high" onclick="previewGraphics('high')">High</button>
+                        </div>
+                        <span class="settings-hint" id="graphics-hint">Balanced — default experience. Low disables particles and glow effects.</span>
+                    </div>
+                </div>
+
+                <div class="settings-col">
+                    <div class="settings-section-label">Visual Effects</div>
+
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-critpop" checked> Crit Popups</label>
+                        <span class="settings-hint">Shows a big animated number when you land or receive a critical hit.</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-particles" checked> Particles</label>
+                        <span class="settings-hint">Enables floating embers, sparks and hit burst particles on the board.</span>
+                    </div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-rarity-glow" checked> Rarity Glow</label>
+                        <span class="settings-hint">Cards glow with their rarity colour. Turn off for a cleaner look.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Card Darkness</div>
+                    <div class="settings-item">
+                        <div class="settings-row">
+                            <span class="settings-label" id="card-dark-label">0</span>
+                            <input type="range" id="opt-card-dark" class="settings-slider" value="0" min="0" max="60" step="1"
+                                oninput="applyCardDark(this.value)">
+                        </div>
+                        <span class="settings-hint">Darkens card backgrounds for better readability in bright environments.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUDIO -->
+        <div class="settings-tab-panel" id="stab-audio">
+            <div class="settings-grid" style="gap:28px; padding-bottom:4px;">
+                <div class="settings-col">
+                    <div class="settings-section-label">Volume</div>
+
+                    <div class="settings-item">
+                        <div class="settings-row">
+                            <span class="settings-label">Music</span>
+                            <input type="range" id="v-m" class="settings-slider" value="40" min="0" max="100" oninput="setMusicVol(this.value)">
+                        </div>
+                        <span class="settings-hint">Volume of the background music. Takes effect immediately.</span>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-row">
+                            <span class="settings-label">SFX</span>
+                            <input type="range" id="v-s" class="settings-slider" value="70" min="0" max="100" oninput="setSfxVol(this.value)">
+                        </div>
+                        <span class="settings-hint">Volume of button clicks, dice rolls and card effects.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Music Tracks</div>
+
+                    <div class="settings-item">
+                        <div class="settings-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                            <span class="settings-label" style="min-width:0; font-size:11px;">Menu</span>
+                            <select id="opt-menu-track" class="settings-select" style="width:100%;">
+                                <option value="0">Meditation (default)</option>
+                                <option value="1">Mourning Strings</option>
+                                <option value="2">Cathedral Bells</option>
+                                <option value="3">Ember Waltz</option>
+                                <option value="99">Custom URL ↓</option>
+                            </select>
+                        </div>
+                        <span class="settings-hint">The track that plays on the main menu and sub-menus.</span>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-row" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                            <span class="settings-label" style="min-width:0; font-size:11px;">Battle</span>
+                            <select id="opt-battle-track" class="settings-select" style="width:100%;">
+                                <option value="0">Warfare (default)</option>
+                                <option value="1">War Drums</option>
+                                <option value="2">Void Pulse</option>
+                                <option value="3">Blood March</option>
+                                <option value="99">Custom URL ↓</option>
+                            </select>
+                        </div>
+                        <span class="settings-hint">The track that plays during a battle. Fades in when a match starts.</span>
+                    </div>
+                </div>
+
+                <div class="settings-col">
+                    <div class="settings-section-label">Custom Music</div>
+                    <div class="settings-item">
+                        <div style="display:flex; gap:5px; align-items:center; margin-bottom:2px;">
+                            <input type="text" id="opt-custom-music-url" placeholder="https://…/track.mp3" class="custom-music-input"
+                                style="flex:1; background:rgba(10,5,0,0.85); border:1px solid rgba(100,65,20,0.5); border-radius:4px; color:#e8c87a; font-family:'Cinzel',serif; font-size:10px; padding:6px 8px; outline:none; letter-spacing:0.5px;">
+                            <button id="btn-test-audio" onclick="testCustomMusic()" style="font-family:'Cinzel',serif; font-size:9px; background:rgba(30,15,3,0.9); border:1px solid rgba(120,80,20,0.5); color:#c8a460; padding:6px 10px; cursor:pointer; border-radius:3px; white-space:nowrap;">▶ Test</button>
+                            <button id="btn-stop-audio" onclick="stopTestCustomMusic()" style="display:none; font-family:'Cinzel',serif; font-size:9px; background:rgba(30,15,3,0.9); border:1px solid rgba(160,40,20,0.6); color:#e07050; padding:6px 10px; cursor:pointer; border-radius:3px; white-space:nowrap;">■ Stop</button>
+                        </div>
+                        <div id="custom-music-status" style="font-size:9px; color:#7a5a30; min-height:13px;"></div>
+                        <span class="settings-hint">Paste a direct link to an MP3 or OGG file. Select "Custom URL" in the track picker above, then Apply.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Focus Behaviour</div>
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-mute-blur"> Mute on focus loss</label>
+                        <span class="settings-hint">Automatically mutes all audio when the game window loses focus.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OFFLINE / BOT -->
+        <div class="settings-tab-panel" id="stab-offline">
+            <div class="settings-grid" style="gap:28px; padding-bottom:4px;">
+                <div class="settings-col">
+                    <div class="settings-section-label">AI Difficulty</div>
+                    <div class="settings-item">
+                        <div class="settings-btn-group" id="opt-difficulty" style="margin-bottom:4px;">
+                            <button class="settings-opt-btn" data-val="easy" onclick="previewDifficulty('easy')">Easy</button>
+                            <button class="settings-opt-btn active" data-val="normal" onclick="previewDifficulty('normal')">Normal</button>
+                            <button class="settings-opt-btn" data-val="hard" onclick="previewDifficulty('hard')">Hard</button>
+                        </div>
+                        <span class="settings-hint" id="difficulty-hint">Normal — balanced crit and fail rates for the AI.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">AI Think Speed</div>
+                    <div class="settings-item">
+                        <div class="settings-btn-group" id="opt-ai-think" style="margin-bottom:4px;">
+                            <button class="settings-opt-btn" data-val="fast" onclick="previewAiThink('fast')">Fast</button>
+                            <button class="settings-opt-btn active" data-val="normal" onclick="previewAiThink('normal')">Normal</button>
+                            <button class="settings-opt-btn" data-val="slow" onclick="previewAiThink('slow')">Slow</button>
+                        </div>
+                        <span class="settings-hint">How long the AI pauses before playing its card. Fast feels snappy; Slow feels more deliberate.</span>
+                    </div>
+
+                    <div class="settings-section-label" style="margin-top:14px;">Crit Damage</div>
+                    <div class="settings-item">
+                        <div class="settings-row">
+                            <span class="settings-label" id="crit-dmg-label">2.2×</span>
+                            <input type="range" id="opt-crit-mult" class="settings-slider" value="22" min="10" max="40" step="1"
+                                oninput="document.getElementById('crit-dmg-label').textContent=(this.value/10).toFixed(1)+'×'">
+                        </div>
+                        <span class="settings-hint">Multiplier applied to damage when you roll a 6. Default is 2.2×. Higher = more swingy games.</span>
+                    </div>
+                </div>
+
+                <div class="settings-col">
+                    <div class="settings-section-label">Balance Tweaks</div>
+
+                    <div class="settings-item">
+                        <label class="settings-check"><input type="checkbox" id="opt-berserker-nerf"> Slow Berserker pace</label>
+                        <span class="settings-hint">Reduces how often the Berserker deck draws its chain attack cards. Recommended for fairer matches.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONLINE / MATCHES -->
+        <div class="settings-tab-panel" id="stab-online">
+
+            <!-- Language -->
+            <div class="settings-row">
+                <div class="settings-label">Language</div>
+                <div class="settings-control">
+                    <select class="cdb-input" id="opt-language" onchange="applyLanguage(this.value); saveSettings();"
+                        style="font-family:'Cinzel',serif;font-size:10px;padding:6px 10px;min-width:140px;">
+                        <!-- populated by settings.js -->
+                    </select>
+                </div>
+                <div class="settings-hint">Sets your preferred display language. Translation support is coming.</div>
+            </div>
+
+            <!-- Streamer Mode -->
+            <div class="settings-row">
+                <div class="settings-label">Streamer Mode</div>
+                <div class="settings-control">
+                    <label class="toggle-wrap">
+                        <input type="checkbox" id="opt-streamer-mode"
+                            onchange="applyStreamerMode(this.checked); saveSettings();">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-hint">Hides other players' usernames to first 3 letters, and enables strict chat moderation. Ideal for live streaming.</div>
+            </div>
+
+            <!-- Chat Auto-Translate -->
+            <div class="settings-row">
+                <div class="settings-label">Auto-Translate Chat</div>
+                <div class="settings-control">
+                    <label class="toggle-wrap">
+                        <input type="checkbox" id="opt-auto-translate"
+                            onchange="window._autoTranslateChat=this.checked; saveSettings();">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="settings-hint">Automatically translate incoming chat messages to your language. Uses LibreTranslate.</div>
+            </div>
+
+        </div>
+
+        <div class="deco-rule" style="margin-top:14px;"></div>
+        <div style="position:sticky; bottom:0; width:100%; background:linear-gradient(0deg,rgba(4,1,0,1) 60%,rgba(4,1,0,0.96) 80%,transparent 100%); display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; padding:16px 0 18px; z-index:10; margin-top:auto;">
+            <button class="btn primary" onclick="applyAndReloadSettings()">✦ Apply</button>
+            <button class="btn" onclick="playSfx('menuClick'); toggle('menu-settings',false)">Return</button>
+            <span id="settings-apply-hint" style="font-family:'IM Fell English',serif; font-size:11px; font-style:italic; color:#a8c87a; opacity:0; transition:opacity 0.4s; min-width:60px;"></span>
+        </div>
+        </div><!-- end screen-content-wrap -->
+    </div>
+
+    
+    <div id="menu-mods" class="screen" style="display:none; overflow-y:auto; align-items:center; padding:32px 40px 24px;">
+        <div class="screen-content-wrap" style="max-width:640px; align-items:center;">
+        <h2 style="margin-bottom:4px;">🔧 Mods</h2>
+        <div class="deco-rule" style="margin-bottom:14px;"></div>
+        <div style="font-family:'IM Fell English',serif; font-size:12px; color:#6b4f2a; font-style:italic; text-align:center; max-width:500px; line-height:1.8; margin-bottom:16px;">
+            Load a <code style="font-family:monospace; background:rgba(0,0,0,0.4); padding:1px 5px; border-radius:3px; color:#c8a460;">.json</code> mod file to inject custom cards and decks into the game.
+        </div>
+
+        
+        <div id="mod-drop-zone" style="
+            width:100%; max-width:460px;
+            border: 2px dashed rgba(120,80,30,0.4); border-radius:10px;
+            padding: 28px 24px; text-align:center;
+            color:#7a5a30; font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px;
+            transition: border-color 0.2s, background 0.2s;
+            margin-bottom:10px;
+        "
+        ondragover="event.preventDefault(); this.style.borderColor='rgba(200,150,40,0.8)'; this.style.background='rgba(40,20,5,0.4)';"
+        ondragleave="this.style.borderColor=''; this.style.background='';"
+        ondrop="handleModDrop(event)"
+        >
+            <div style="font-size:26px; margin-bottom:8px; opacity:0.35;">📦</div>
+            Drag &amp; drop a mod file here
+        </div>
+
+        
+        <button class="btn" style="min-width:180px; padding:8px 20px; font-size:10px; margin-bottom:16px;"
+            onclick="document.getElementById('mod-file-input').click()">
+            📂 Browse for Mod File
+        </button>
+        <input type="file" id="mod-file-input" accept=".json" style="display:none" onchange="handleModFileInput(this)">
+
+        <div id="mod-list" style="width:100%; max-width:460px; display:flex; flex-direction:column; gap:6px; margin-bottom:16px;"></div>
+        <div class="deco-rule" style="width:100%; max-width:460px;"></div>
+        <button class="btn" onclick="playSfx('menuClick'); toggle('menu-mods', false)">Return</button>
+        </div><!-- end screen-content-wrap -->
+    </div>
+
+    
+    <div id="screen-end" class="screen" style="display:none;">
+        <div id="end-title">RESULT</div>
+        <div class="deco-rule"></div>
+        <div id="end-stats" style="font-family:'IM Fell English',serif;font-size:13px;color:#a07840;line-height:2;text-align:center;margin-bottom:8px;"></div>
+        <button class="btn" onclick="playSfx('menuClick'); rematch()">⚔ Rematch</button>
+        <button class="btn" onclick="playSfx('menuClick'); returnToMenu()">🏠 Main Menu</button>
+    </div>
+
+    
+    <div id="board" style="display:none; width:100%; height:100%; position:relative; z-index:3;">
+
+        <!-- ── IN-GAME CHAT ── -->
+        <div id="game-chat">
+            <div id="chat-header">
+                <span id="chat-header-label">💬 Chat</span>
+                <button id="chat-close-btn" onclick="toggleChat(false)" title="Minimise">−</button>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-row">
+                <textarea id="chat-input" rows="1" maxlength="240" placeholder="Say something... (Shift+Enter for new line)"></textarea>
+                <button id="chat-send-btn" onclick="sendChatMessage()" title="Send">➤</button>
+            </div>
+            <div id="chat-resize-handle"></div>
+        </div>
+        <button id="chat-toggle-btn" onclick="toggleChat(true)" title="Open chat">
+            💬
+            <div id="chat-unread-dot"></div>
+        </button>
+        <div id="a-hud" class="hud">
+            <div class="hud-header">
+                <span>Opponent</span>
+                <span id="a-icons" class="status-icons"></span>
+            </div>
+            <div class="hp-label"><span>HP</span><span id="a-hp-val">75</span></div>
+            <div class="hp-bar"><div id="a-hp-f" class="hp-fill" style="width:100%;"></div></div>
+            <div id="a-status" class="status-tray"></div>
+        </div>
+
+        <div id="p-hud" class="hud">
+            <div class="hud-header">
+                <span>Player</span>
+                <span id="p-icons" class="status-icons"></span>
+            </div>
+            <div class="hp-label"><span>HP</span><span id="p-hp-val">75</span></div>
+            <div class="hp-bar"><div id="p-hp-f" class="hp-fill" style="width:100%;"></div></div>
+            <div id="p-status" class="status-tray"></div>
+        </div>
+
+        <div id="turn-indicator">Your Turn</div>
+
+        
+        <div id="die-box">
+            <div id="die-3d">
+                <div class="die-face face-front">⚀</div>
+                <div class="die-face face-back">⚅</div>
+                <div class="die-face face-right">⚂</div>
+                <div class="die-face face-left">⚃</div>
+                <div class="die-face face-top">⚁</div>
+                <div class="die-face face-bottom">⚄</div>
+            </div>
+            <div id="die-result-label"></div>
+        </div>
+
+        <div id="p-hand" class="hand"></div>
+        <div id="a-hand" class="ai-hand"></div>
+
+        
+        <div id="combat-log" style="
+            position:absolute; bottom:18px; left:260px; right:260px; z-index:3;
+            max-height:70px; overflow:hidden; display:flex; flex-direction:column-reverse;
+            pointer-events:none;">
+        </div>
+
+        
+        <div id="forfeit-popup">
+            <div id="forfeit-popup-box">
+                <span id="forfeit-popup-icon">🏳</span>
+                <div id="forfeit-popup-title">Surrender?</div>
+                <div id="forfeit-popup-body">
+                    You will take the loss.<br>Your opponent wins by default.
+                </div>
+                <div class="forfeit-popup-btns">
+                    <button class="forfeit-confirm-btn yes" onclick="confirmForfeit()">Forfeit</button>
+                    <button class="forfeit-confirm-btn no"  onclick="closeForfeitPopup()">Stay &amp; Fight</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- XP & LEVEL SYSTEM (must load before auth.js and achievements.js) -->
+<script src="js/xp.js"></script>
+
+<!-- CORE ENGINE (defines state, render, toggle, playSfx, delay, opt) -->
+<script src="js/game.js"></script>
+<script src="js/game-helpers.js"></script>
+<!-- UI layer (updateHUD, showEndStats, recordDeckResult — needs game.js first) -->
+<script src="js/ui.js"></script>
+<!-- Gameplay (forfeit, rollDie3D, playerAct, aiAct — needs ui.js + game.js) -->
+<script src="js/settings.js"></script>
+<!-- Achievements & gold (checkAchs, trackGameEnd, unlockAch, shopAwardGold hooks) -->
+<script src="js/achievements.js"></script>
+<!-- Profile & auth (needs achievements.js for daily gold) -->
+<script src="js/profile.js"></script>
+<script src="js/auth.js"></script>
+<!-- Online & social (needs profile.js for _syncedUid) -->
+<script src="js/online.js"></script>
+<script src="js/lobby.js"></script>
+<script src="js/clubs.js"></script>
+<script src="js/leaderboard.js"></script>
+<!-- Features -->
+<script src="js/shop.js"></script>
+<script src="js/changelog.js"></script>
+<script src="js/mods.js"></script>
+<script src="js/translate.js"></script>
+<!-- Platform -->
+<script src="js/controller.js"></script>
+<script src="js/intro.js"></script>
+<script src="js/discord-rpc.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leo-profanity/1.0.0/leo-profanity.min.js"></script>
+<script src="js/discord-rpc-msg.js"></script>
+
+
+<div id="ach-reset-modal">
+    <div id="ach-reset-box">
+        <div class="modal-icon">⚠</div>
+        <div class="modal-title">Reset Achievements?</div>
+        <div class="modal-body">
+            This will permanently wipe all achievement progress<br>and stat history from local storage.<br><br>
+            <strong style="color:#c06060;">This cannot be undone.</strong>
+        </div>
+        <div class="modal-btns">
+            <button class="modal-btn-cancel" onclick="document.getElementById('ach-reset-modal').classList.remove('open')">Cancel</button>
+            <button class="modal-btn-confirm" onclick="doResetAchievements()">Reset Everything</button>
+        </div>
+    </div>
+</div>
+
+<div id="intro-overlay">
+
+
+
+    <!-- ═══════════════════ ONLINE ROOM SCREEN ═══════════════════ -->
+    <!-- ═══════════════════ PRIVATE ROOM CHOICE ═══════════════════ -->
+    <div id="menu-private-room-choice" class="screen" style="display:none;">
+        <button class="back-btn" onclick="playSfx('menuClick'); toggle('menu-private-room-choice',false); toggle('menu-start',true)" style="position:absolute;top:22px;left:28px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a07840;cursor:pointer;background:rgba(0,0,0,0.4);border:1px solid rgba(140,95,25,0.4);border-radius:6px;padding:5px 14px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:20;" onmouseover="this.style.color='#e8c870';this.style.borderColor='rgba(200,160,40,0.7)';this.style.background='rgba(0,0,0,0.6)'" onmouseout="this.style.color='#a07840';this.style.borderColor='rgba(140,95,25,0.4)';this.style.background='rgba(0,0,0,0.4)'">‹ Back</button>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:24px;max-width:500px;width:90%;">
+            <div style="text-align:center;">
+                <div class="online-heading">🔒 Private Room</div>
+                <div class="online-subheading" style="text-align:center;margin-top:4px;">Create a lobby or join one with a code</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;">
+                <!-- Create -->
+                <div onclick="playSfx('menuClick'); openCreateRoom();" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,rgba(22,8,1,0.97),rgba(6,2,0,0.98));border:1px solid rgba(180,130,40,0.55);border-radius:10px;padding:0 0 22px;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(0,0,0,0.6);" onmouseover="this.style.borderColor='rgba(220,170,60,0.85)';this.style.boxShadow='0 6px 28px rgba(0,0,0,0.8),0 0 18px rgba(180,120,0,0.18)'" onmouseout="this.style.borderColor='rgba(180,130,40,0.55)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.6)'">
+                    <div style="width:100%;background:rgba(200,160,60,0.1);border-bottom:1px solid rgba(180,130,40,0.3);padding:6px 0 4px;text-align:center;border-radius:10px 10px 0 0;margin-bottom:16px;">
+                        <span style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:#a07840;font-family:'Cinzel',serif;">Create Room</span>
+                    </div>
+                    <div style="font-size:46px;margin-bottom:12px;filter:drop-shadow(0 0 12px rgba(255,180,0,0.3));">🏰</div>
+                    <p style="font-size:10px;letter-spacing:1px;color:#7a5a30;text-align:center;padding:0 14px;line-height:1.7;font-family:'Cinzel',serif;">Create a lobby, set room size, and share your code.</p>
+                </div>
+                <!-- Join -->
+                <div onclick="playSfx('menuClick'); openJoinRoom();" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;background:linear-gradient(160deg,rgba(22,8,1,0.97),rgba(6,2,0,0.98));border:1px solid rgba(180,130,40,0.55);border-radius:10px;padding:0 0 22px;transition:border-color 0.2s,box-shadow 0.2s;box-shadow:0 4px 20px rgba(0,0,0,0.6);" onmouseover="this.style.borderColor='rgba(220,170,60,0.85)';this.style.boxShadow='0 6px 28px rgba(0,0,0,0.8),0 0 18px rgba(180,120,0,0.18)'" onmouseout="this.style.borderColor='rgba(180,130,40,0.55)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.6)'">
+                    <div style="width:100%;background:rgba(200,160,60,0.1);border-bottom:1px solid rgba(180,130,40,0.3);padding:6px 0 4px;text-align:center;border-radius:10px 10px 0 0;margin-bottom:16px;">
+                        <span style="font-size:10px;letter-spacing:5px;text-transform:uppercase;color:#a07840;font-family:'Cinzel',serif;">Join Room</span>
+                    </div>
+                    <div style="font-size:46px;margin-bottom:12px;filter:drop-shadow(0 0 12px rgba(255,180,0,0.3));">🔑</div>
+                    <p style="font-size:10px;letter-spacing:1px;color:#7a5a30;text-align:center;padding:0 14px;line-height:1.7;font-family:'Cinzel',serif;">Enter a 6-character code to join a friend's lobby.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ═══════════════════ END PRIVATE ROOM CHOICE ═══════════════════ -->
+
+    <!-- ═══════════════════ CREATE ROOM SETUP SCREEN ═══════════════════ -->
+    <div id="menu-create-room-setup" class="screen" style="display:none; align-items:center; justify-content:center;">
+        <button class="back-btn" onclick="playSfx('menuClick'); toggle('menu-create-room-setup',false); toggle('menu-private-room-choice',true)" style="position:absolute;top:22px;left:28px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a07840;cursor:pointer;background:rgba(0,0,0,0.4);border:1px solid rgba(140,95,25,0.4);border-radius:6px;padding:5px 14px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:20;" onmouseover="this.style.color='#e8c870';this.style.borderColor='rgba(200,160,40,0.7)';this.style.background='rgba(0,0,0,0.6)'" onmouseout="this.style.color='#a07840';this.style.borderColor='rgba(140,95,25,0.4)';this.style.background='rgba(0,0,0,0.4)'">‹ Back</button>
+        <div style="width:340px;display:flex;flex-direction:column;gap:16px;">
+            <div>
+                <div class="online-heading">🏰 Create Room</div>
+                <div class="online-subheading">Configure your lobby</div>
+            </div>
+            <div class="online-card" style="gap:12px;">
+                <div style="display:flex;flex-direction:column;gap:5px;">
+                    <label class="online-card-label">Room Name</label>
+                    <input class="online-input" id="create-room-name-input" type="text" maxlength="32" placeholder="My Lobby" style="font-size:14px;letter-spacing:2px;padding:10px 12px;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:5px;">
+                    <label class="online-card-label">Room Size (2 – 10 players)</label>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button onclick="_lobbyAdjSize(-1)" style="width:34px;height:34px;border-radius:50%;background:rgba(80,50,8,0.5);border:1px solid rgba(140,95,25,0.4);color:#c8a460;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(120,80,15,0.7)'" onmouseout="this.style.background='rgba(80,50,8,0.5)'">−</button>
+                        <span id="create-room-size-val" style="font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:#e8c87a;min-width:28px;text-align:center;">2</span>
+                        <button onclick="_lobbyAdjSize(1)" style="width:34px;height:34px;border-radius:50%;background:rgba(80,50,8,0.5);border:1px solid rgba(140,95,25,0.4);color:#c8a460;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;" onmouseover="this.style.background='rgba(120,80,15,0.7)'" onmouseout="this.style.background='rgba(80,50,8,0.5)'">+</button>
+                    </div>
+                </div>
+                <div class="online-status" id="create-room-status" style="display:none;"></div>
+                <button class="auth-btn" onclick="_lobbyCreate()" style="margin-top:4px;">🏰 Create Room</button>
+            </div>
+        </div>
+    </div>
+    <!-- ═══════════════════ END CREATE ROOM SETUP SCREEN ═══════════════════ -->
+
+    <!-- ═══════════════════ JOIN ROOM SCREEN ═══════════════════ -->
+    <div id="menu-online-room" class="screen" style="display:none; align-items:center; justify-content:center;">
+        <button class="back-btn" onclick="playSfx('menuClick'); toggle('menu-online-room',false); toggle('menu-private-room-choice',true)" style="position:absolute;top:22px;left:28px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a07840;cursor:pointer;background:rgba(0,0,0,0.4);border:1px solid rgba(140,95,25,0.4);border-radius:6px;padding:5px 14px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:20;" onmouseover="this.style.color='#e8c870';this.style.borderColor='rgba(200,160,40,0.7)';this.style.background='rgba(0,0,0,0.6)'" onmouseout="this.style.color='#a07840';this.style.borderColor='rgba(140,95,25,0.4)';this.style.background='rgba(0,0,0,0.4)'">‹ Back</button>
+        <div style="width:340px;display:flex;flex-direction:column;gap:16px;">
+            <div>
+                <div class="online-heading">🔑 Join Room</div>
+                <div class="online-subheading">Enter the room code</div>
+            </div>
+            <div class="online-card" style="gap:12px;">
+                <div class="online-card-label">Room Code</div>
+                <input class="online-input" id="room-join-input" type="text" maxlength="6"
+                    placeholder="······"
+                    oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6)"
+                    onkeydown="if(event.key==='Enter')joinRoomByCode()">
+                <div class="online-status" id="room-join-status" style="display:none;"></div>
+                <div class="online-btn-row">
+                    <button class="auth-btn" id="room-join-btn" onclick="joinRoomByCode()">⚔ Join Battle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ═══════════════════ END JOIN ROOM SCREEN ═══════════════════ -->
+
+    <!-- ═══════════════════ LOBBY SCREEN ═══════════════════ -->
+    <div id="menu-lobby" class="screen" style="display:none; overflow:hidden;">
+        <div class="lobby-wrap">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                    <div id="lobby-room-name-display" class="lobby-room-name-display" onclick="_lobbyEditName()" title="Click to edit">My Lobby</div>
+                    <input class="lobby-room-name-input" id="lobby-room-name-input" maxlength="32"
+                        onblur="_lobbySaveName()" onkeydown="if(event.key==='Enter')this.blur()">
+                    <div class="lobby-sub" id="lobby-sub-info">2 / 2 players · waiting for everyone to ready up</div>
+                </div>
+                <div class="lobby-code-box" style="text-align:right;">
+                    <div class="online-card-label">Room Code</div>
+                    <div class="lobby-code-val" id="lobby-code-display" onclick="_lobbyCopyCode()" title="Click to copy">——————</div>
+                    <div class="lobby-size-info" id="lobby-size-display">0 / 2 players</div>
+                </div>
+            </div>
+
+            <div class="lobby-spectate-bar" id="lobby-spectate-bar">
+                👁 You are spectating — waiting for a spot to open up
+            </div>
+
+            <div class="lobby-body">
+                <!-- Players -->
+                <div class="lobby-players-col">
+                    <div class="lobby-col-label">Players</div>
+                    <div class="lobby-player-list" id="lobby-player-list"></div>
+                </div>
+
+                <!-- Chat -->
+                <div class="lobby-chat-col">
+                    <div class="lobby-col-label">Room Chat</div>
+                    <div class="lobby-chat-box" id="lobby-chat-box"></div>
+                    <div class="lobby-chat-input-row">
+                        <input class="lobby-chat-input" id="lobby-chat-input" type="text"
+                            maxlength="200" placeholder="Message the room…"
+                            onkeydown="if(event.key==='Enter')_lobbySendChat()">
+                        <button class="lobby-chat-send-btn" onclick="_lobbySendChat()">Send</button>
+                    </div>
+                </div>
+
+                <!-- Info + actions -->
+                <div class="lobby-info-col">
+                    <div class="lobby-col-label">Actions</div>
+                    <div class="lobby-btn-stack">
+                        <button class="lobby-ready-btn" id="lobby-ready-btn" onclick="_lobbyToggleReady()">✓ Ready</button>
+                        <button class="lobby-leave-btn" onclick="_lobbyLeave()">Leave Room</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ═══════════════════ END LOBBY SCREEN ═══════════════════ -->
+
+    <!-- ═══════════════════ MATCHMAKING SCREEN ═══════════════════ -->
+    <div id="menu-matchmaking" class="screen" style="display:none; overflow-y:auto; justify-content:center; align-items:center; padding:28px;">
+        <button class="back-btn" onclick="cancelMatchmaking()" style="position:absolute;top:22px;left:28px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#a07840;cursor:pointer;background:rgba(0,0,0,0.4);border:1px solid rgba(140,95,25,0.4);border-radius:6px;padding:5px 14px;transition:color 0.2s,border-color 0.2s,background 0.2s;z-index:20;" onmouseover="this.style.color='#e8c870';this.style.borderColor='rgba(200,160,40,0.7)';this.style.background='rgba(0,0,0,0.6)'" onmouseout="this.style.color='#a07840';this.style.borderColor='rgba(140,95,25,0.4)';this.style.background='rgba(0,0,0,0.4)'">‹ Cancel</button>
+        <div class="mm-wrap">
+            <div>
+                <h2 class="online-heading">🔍 Find Match</h2>
+                <div class="online-subheading" style="text-align:center;">Searching for an opponent</div>
+            </div>
+            <div class="mm-spinner" id="mm-spinner"></div>
+            <div class="mm-waiting-text" id="mm-status-text">Searching for an opponent…</div>
+            <div class="mm-elapsed" id="mm-elapsed"></div>
+            <div id="mm-queue-info" style="font-family:'Cinzel',serif;font-size:9px;color:#5a3a10;letter-spacing:1px;"></div>
+            <div class="mm-found-card" id="mm-found-card">
+                <div class="mm-found-label">Opponent Found</div>
+                <div class="mm-found-name" id="mm-found-name">—</div>
+                <div class="online-status ok" style="margin-top:4px;">Preparing battle…</div>
+            </div>
+            <!-- Cancel via the ‹ Cancel back-btn at top left -->
+        </div>
+    </div>
+    <!-- ═══════════════════ END MATCHMAKING SCREEN ═══════════════════ -->
+
+    
+    <div class="intro-stage" id="intro-s1">
+        <div class="intro-label">Published by</div>
+        <div class="intro-title">SunCast Studio</div>
+    </div>
+
+    
+    <div class="intro-stage" id="intro-s2">
+        <div class="intro-divider"></div>
+        <p class="intro-body">
+            Damage Roll is an HTML game created by r3ctrr under SunCast Studio.<br>
+            This game is provided "as is" and may have small quirks.<br>
+            All gameplay, assets, and systems belong to SunCast Studio.
+        </p>
+        <div class="intro-divider"></div>
+    </div>
+
+    
+    <div class="intro-stage" id="intro-s3">
+        <div class="intro-label">Content Creator Notice</div>
+        <p class="intro-body">
+            Showing, streaming, or making content with the game is fully allowed and encouraged.
+            Just credit the game name so people can find it.<br><br>
+            Damage Roll is built with HTML, CSS, and JavaScript, so some setups may see lag or
+            frame drops when recording or streaming through OBS Portable.
+            This is normal for browser-based games under capture.
+        </p>
+    </div>
+
+    
+    <div class="intro-stage" id="intro-s4">
+        <div class="intro-label">Made with the help of</div>
+        <div class="intro-tech">
+            <span>HTML</span><span class="intro-tech-sep">|</span>
+            <span>CSS</span><span class="intro-tech-sep">|</span>
+            <span>JS</span><span class="intro-tech-sep">|</span>
+            <span>Electron</span><span class="intro-tech-sep">|</span>
+            <span>GitHub</span>
+        </div>
+    </div>
+
+    <div id="intro-hint">Click anywhere to skip</div>
+</div>
+
+</body>
+</html>
